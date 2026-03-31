@@ -40,7 +40,7 @@ export default function RootLayout({
       suppressHydrationWarning 
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className={`${inter.variable} min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)] transition-colors duration-500 font-sans`}>
+      <body className={`${inter.variable} min-h-full flex flex-col bg-(--background) text-(--foreground) transition-colors duration-500 font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <Navbar />
           <main className="grow">{children}</main>

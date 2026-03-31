@@ -46,7 +46,7 @@ const PROJECTS = [
 
 export default function ProjectsPage() {
   return (
-    <div className="bg-[var(--background)] text-[var(--foreground)] transition-colors duration-700">
+    <div className="bg-(--background) text-(--foreground) transition-colors duration-700">
       {/* HEADER */}
       <section className="pt-56 pb-32 px-8 md:px-24">
         <div className="max-w-7xl mx-auto">
@@ -61,19 +61,13 @@ export default function ProjectsPage() {
             The <span className="opacity-30">Portfolio</span>
           </h1>
 
-          <div className="grid md:grid-cols-2 gap-12 border-t border-[var(--border)] pt-12">
-            <p className="text-xl text-[var(--muted)] leading-snug">
+          <div className="grid md:grid-cols-2 gap-12 border-t border-(--border) pt-12">
+            <p className="text-xl text-(--muted) leading-snug">
               Intersection of{" "}
-              <span className="text-[var(--foreground)] font-medium">
+              <span className="text-(--foreground) font-medium">
                 Heart, Mind, and Technology
               </span>
             </p>
-
-            <div className="text-right text-[10px] font-mono uppercase tracking-widest opacity-40">
-              System_Status: Optimal <br />
-              Registry: 2024-2026 <br />
-              Total_Items: 03
-            </div>
           </div>
         </div>
       </section>
@@ -91,8 +85,8 @@ export default function ProjectsPage() {
             } gap-16 items-start`}
           >
             {/* IMAGE */}
-            <div className="w-full lg:w-2/3 rounded-[2rem] overflow-hidden bg-[var(--card)]">
-              <div className="relative aspect-[16/10] group">
+            <div className="w-full lg:w-2/3 rounded-4xl overflow-hidden bg-(--card)">
+              <div className="relative aspect-16/10 group">
                 <img
                   src={project.image}
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-105"
@@ -118,7 +112,7 @@ export default function ProjectsPage() {
                 <span className="text-blue-600 font-mono text-sm">
                   {project.id}
                 </span>
-                <div className="h-px flex-1 bg-[var(--border)]" />
+                <div className="h-px flex-1 bg-(--border)" />
                 <span className="text-xs opacity-40">{project.year}</span>
               </div>
 
@@ -126,10 +120,10 @@ export default function ProjectsPage() {
                 {project.title}
               </h2>
 
-              <p className="text-[var(--muted)]">{project.description}</p>
+              <p className="text-(--muted)">{project.description}</p>
 
               {/* IMPACT */}
-              <div className="p-6 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
+              <div className="p-6 rounded-2xl bg-(--card) border border-(--border)">
                 <div className="flex justify-between text-xs opacity-40 mb-2">
                   <span>Impact</span>
                   <ArrowUpRight size={14} />
@@ -148,7 +142,7 @@ export default function ProjectsPage() {
 
                 <Link
                   href={`/portfolios/${project.id}`}
-                  className="flex items-center gap-2 px-5 py-3 rounded-full bg-[var(--foreground)] text-[var(--background)] text-xs uppercase tracking-widest hover:bg-blue-600 transition"
+                  className="flex items-center gap-2 px-5 py-3 rounded-full bg-(--foreground) text-(--background) text-xs uppercase tracking-widest hover:bg-blue-600 transition"
                 >
                   View <ArrowRight size={14} />
                 </Link>
@@ -159,16 +153,16 @@ export default function ProjectsPage() {
       </main>
 
       {/* CTA */}
-      <section className="py-40 px-8 text-center bg-[var(--card)] border-t border-[var(--border)]">
+      <section className="py-40 px-8 text-center bg-(--card) border-t border-(--border)">
         <h2 className="text-[8vw] font-black italic leading-none mb-6">
           Ready to <span className="text-blue-600">Transform?</span>
         </h2>
 
-        <p className="text-[var(--muted)] mb-10 max-w-xl mx-auto">
+        <p className="text-(--muted) mb-10 max-w-xl mx-auto">
           We are accepting new strategic partnerships.
         </p>
         <Link href="/contact">
-          <button className="px-10 py-5 rounded-full bg-[var(--foreground)] text-[var(--background)] text-xs uppercase tracking-widest hover:bg-blue-600 transition">
+          <button className="px-10 py-5 rounded-full bg-(--foreground) text-(--background) text-xs uppercase tracking-widest hover:bg-blue-600 transition">
             Initialize Discovery
           </button>
         </Link>

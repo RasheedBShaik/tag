@@ -56,7 +56,7 @@ export default function WhoWeArePage() {
           <div className="absolute inset-0 z-10 bg-white/10 dark:bg-zinc-950/40  transition-all duration-700" />
         </div>
 
-        <div className="relative z-30 w-full pt-32 px-8 md:px-24 max-w-7xl mx-auto">
+        <div className="relative z-30 w-full pt-20 px-8 md:px-24 max-w-7xl mx-auto">
           <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
             <motion.div variants={fadeInUp} className="flex items-center gap-4 text-blue-600 mb-10">
               <div className="h-px w-12 bg-current" />
