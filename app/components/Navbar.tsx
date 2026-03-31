@@ -32,6 +32,7 @@ const Navbar = () => {
   const leftLinks = [
     { name: "Home", href: "/" },
     { name: "Who We Are", href: "/who-we-are" },
+    { name: "our approach", href: "/approach" },
   ];
   const rightLinks = [
     { name: "Insights", href: "/insights" },
@@ -42,7 +43,7 @@ const Navbar = () => {
   if (!mounted) return <div className="h-20" />;
 
   return (
-    <nav className="fixed top-0 w-full z-[100] pb-4">
+    <nav className="fixed top-0 w-full z-100 pb-4">
       <div className="px-6 py-3 border dark:bg-zinc-950/80 bg-white/80 backdrop-blur-xl border-zinc-200 dark:border-white/10 shadow-lg transition-all duration-500">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           
@@ -129,7 +130,7 @@ const Navbar = () => {
             </motion.button>
 
             <button 
-              className="lg:hidden p-2.5 rounded-xl dark:bg-white/5 bg-white border dark:border-white/10 border-zinc-200 z-[110]"
+              className="lg:hidden p-2.5 rounded-xl dark:bg-white/5 bg-white border dark:border-white/10 border-zinc-200 z-110"
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? <FaXmark size={18} /> : <FaBars size={18} />}
@@ -146,7 +147,7 @@ const Navbar = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 w-full h-screen dark:bg-zinc-950 bg-white lg:hidden z-[99] pt-28 px-8 overflow-y-auto"
+            className="fixed inset-0 w-full h-screen dark:bg-zinc-950 bg-white lg:hidden z-99 pt-28 px-8 overflow-y-auto"
           >
             <div className="flex flex-col gap-4 max-w-md">
               {/* Home & Who We Are */}

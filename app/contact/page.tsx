@@ -28,9 +28,11 @@ export default function ContactComponent() {
             <span className="text-[10px] font-black uppercase tracking-[0.5em]">Initiate_Connection</span>
           </motion.div>
           
-          <h1 className="text-5xl md:text-[7vw] font-black tracking-tighter uppercase italic leading-[0.85] mb-10">
+          <h1 className="text-4xl md:text-8xl font-black tracking-tighter uppercase  mb-10">
             Let's Start a <br /> 
-            <span className="text-zinc-400 dark:text-zinc-800 transition-colors hover:text-blue-600 duration-500 italic">Conversation.</span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-blue-500 to-indigo-400 dark:from-blue-500 dark:to-zinc-400">
+              conversation
+            </span>
           </h1>
           <p className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl font-medium leading-relaxed">
             Whether you're a founder with a bold idea or an enterprise leader driving transformation, we're here to architect the next phase of your evolution.

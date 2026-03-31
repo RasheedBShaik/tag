@@ -69,11 +69,13 @@ export default function InsightsPage() {
         {/* Hero text */}
         <motion.div
           style={{ y: headerY, opacity: headerOpacity }}
-          className="relative z-10 px-6 sm:px-12 md:px-24 pb-12 md:pb-24 max-w-7xl"
+          className="relative z-10 px-2 sm:px-12 md:px-24 pb-12 md:pb-24 max-w-7xl"
         >
-          <h1 className="text-5xl sm:text-7xl md:text-[clamp(4rem,10vw,9rem)] font-black italic leading-[0.9] uppercase text-white">
+          <h1 className="text-5xl sm:text-7xl md:text-[clamp(4rem,10vw,9rem)] font-black  leading-[0.9] uppercase text-white">
             Heart Mind <br />
-            <span className="opacity-30">Technology</span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-blue-500 to-indigo-400 dark:from-blue-500 dark:to-zinc-400">
+                Technology
+              </span>
           </h1>
 
           <p className="max-w-md mt-6 text-white/70 text-base md:text-lg">
@@ -119,7 +121,7 @@ export default function InsightsPage() {
               } gap-8 md:gap-20 items-center`}
             >
               {/* IMAGE */}
-              <div className="w-full md:w-1/2 aspect-[4/3] md:aspect-auto rounded-2xl md:rounded-[2.5rem] overflow-hidden bg-(--card)">
+              <div className="w-full md:w-1/2 aspect-4/3 md:aspect-auto rounded-2xl md:rounded-[2.5rem] overflow-hidden bg-(--card)">
                 <img
                   src={article.image}
                   alt={article.title}
@@ -129,7 +131,7 @@ export default function InsightsPage() {
 
               {/* TEXT */}
               <div className="w-full md:w-1/2 space-y-4 md:space-y-6">
-                <div className="text-[10px] md:text-xs uppercase tracking-widest text-[var(--muted)] font-semibold">
+                <div className="text-[10px] md:text-xs uppercase tracking-widest text-(--muted) font-semibold">
                   {article.category} • {article.date} • {article.readTime}
                 </div>
 
@@ -137,13 +139,9 @@ export default function InsightsPage() {
                   {article.title}
                 </h2>
 
-                <p className="text-[var(--muted)] text-base md:text-lg leading-relaxed">
+                <p className="text-(--muted) text-base md:text-lg leading-relaxed">
                   {article.description}
                 </p>
-
-                <Link href={`/insights/${article.slug}`} className="inline-flex items-center gap-2 group text-xs font-bold uppercase tracking-widest text-blue-600">
-                   Read Article <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </Link>
               </div>
             </motion.div>
           )
@@ -152,14 +150,14 @@ export default function InsightsPage() {
 
       {/* SUBSCRIBE */}
       <section className="px-6 md:px-24 pb-24">
-        <div className="max-w-6xl mx-auto rounded-[2rem] md:rounded-[4rem] bg-[var(--card)] border border-[var(--border)] py-16 md:py-32 px-6 md:px-12 text-center">
+        <div className="max-w-6xl mx-auto rounded-4xl md:rounded-[4rem] bg-(--card) border border-(--border) py-16 md:py-32 px-6 md:px-12 text-center">
           <Zap className="mx-auto text-blue-600 mb-6" size={32} />
 
           <h2 className="text-4xl md:text-6xl font-black italic mb-6 leading-none">
             Join the <br className="sm:hidden" /> <span className="opacity-30">Inner Circle</span>
           </h2>
 
-          <p className="text-[var(--muted)] text-sm md:text-lg mb-10 max-w-lg mx-auto">
+          <p className="text-(--muted) text-sm md:text-lg mb-10 max-w-lg mx-auto">
             Receive monthly strategy briefs on building technology with conscience.
           </p>
 

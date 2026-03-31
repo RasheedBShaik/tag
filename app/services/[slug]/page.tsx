@@ -125,9 +125,9 @@ export default function ServiceSlugPage({
             </span>
           </motion.div>
 
-          <h1 className="text-[clamp(3rem,10vw,7rem)] font-black italic uppercase leading-[0.85] tracking-tighter mb-10">
+          <h1 className="text-[clamp(3rem,10vw,7rem)] font-black  uppercase leading-[0.85] tracking-tighter mb-10">
             <span className="block">{data.title.split("&")[0]}</span>
-            <span className="block opacity-20 [-webkit-text-stroke:2px_var(--foreground)] text-transparent italic">
+            <span className="block opacity-20 [-webkit-text-stroke:2px_var(--foreground)] text-transparent">
               {data.title.split("&")[1] || "CORE"}
             </span>
           </h1>
@@ -141,14 +141,14 @@ export default function ServiceSlugPage({
         </section>
 
         {/* GRID */}
-        <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 pb-40">
+        <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {data.outcomes.map((outcome, i) => (
             <motion.div
               layoutId={`card-${i}`}
               key={i}
               onClick={() => setSelectedIdx(i)}
               whileHover={{ scale: 1.03, y: -5 }}
-              className="group relative p-10 rounded-[3rem] bg-(--card) border-2 border-(--border) cursor-pointer overflow-hidden transition-all hover:border-(--accent) hover:shadow-[0_0_50px_-15px_var(--accent-glow)]"
+              className="group relative p-10 rounded-[3rem] bg-(--card) border border-(--border) cursor-pointer overflow-hidden transition-all hover:border-(--accent) hover:shadow-[0_0_50px_-15px_var(--accent-glow)]"
             >
               <div className="relative z-10 space-y-12">
                 <div className="flex justify-between items-start">

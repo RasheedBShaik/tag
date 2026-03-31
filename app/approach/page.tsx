@@ -117,10 +117,10 @@ export default function OurApproachPage() {
       </section>
 
       {/* 3. THE PROCESS */}
-      <section className="py-32 px-6 max-w-7xl mx-auto bg-white dark:bg-zinc-950">
+      <section className="py-32 text-center max-w-7xl bg-white dark:bg-zinc-950">
         <div className="mb-20">
           <h2 className="text-sm font-black uppercase tracking-[0.3em] text-blue-600 dark:text-blue-500 mb-4">The Journey</h2>
-          <h3 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none">Transparency <br /> by Design.</h3>
+          <h3 className="text-4xl md:text-7xl font-black uppercase tracking-tighter leading-none">Transparency <br /> by Design</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-200 dark:bg-white/10 border border-zinc-200 dark:border-white/10 rounded-[3rem] overflow-hidden">
           {[

@@ -56,7 +56,7 @@ export default function WhoWeArePage() {
           <div className="absolute inset-0 z-10 bg-white/10 dark:bg-zinc-950/40  transition-all duration-700" />
         </div>
 
-        <div className="relative z-30 w-full pt-20 px-8 md:px-24 max-w-7xl mx-auto">
+        <div className="relative z-30 w-full pt-20 px-2 md:px-24 max-w-7xl mx-auto">
           <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
             <motion.div variants={fadeInUp} className="flex items-center gap-4 text-blue-600 mb-10">
               <div className="h-px w-12 bg-current" />
@@ -65,11 +65,11 @@ export default function WhoWeArePage() {
 
             <motion.h1
               variants={fadeInUp}
-              className="text-6xl sm:text-8xl md:text-[10rem] font-black uppercase tracking-tighter leading-[0.8] mb-12 italic"
+              className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.8] mb-12 "
             >
               The <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-zinc-900 to-zinc-400 dark:from-white dark:to-zinc-800">
-                Collective
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-blue-500 to-indigo-400 dark:from-blue-500 dark:to-zinc-400">
+                collective
               </span>
             </motion.h1>
 
@@ -97,7 +97,7 @@ export default function WhoWeArePage() {
               <Zap size={14} fill="currentColor" />
               <span className="text-[10px] font-black uppercase tracking-widest">System_Manifesto</span>
             </div>
-            <h3 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9] italic">
+            <h3 className="text-4xl md:text-6xl font-black text-blue-600 uppercase tracking-tighter leading-[0.9]">
               Empowering <br /> the Visionary <br /> in Everyone.
             </h3>
           </motion.div>
@@ -106,7 +106,7 @@ export default function WhoWeArePage() {
             className="lg:col-span-7 space-y-8 text-zinc-500 dark:text-zinc-400 text-xl md:text-2xl font-medium leading-relaxed"
           >
             <p>
-              At <span className="text-zinc-950 dark:text-white">Tagventures</span>, we don’t just consult—we co-architect. We believe the future isn't built by machines, but by leaders who use machines to amplify their heart.
+              At Tagventures, we don’t just consult—we co-architect. We believe the future isn't built by machines, but by leaders who use machines to amplify their heart.
             </p>
             <p className="text-zinc-400 dark:text-zinc-600 italic">
               "We leverage empathy as a technical specification, ensuring every line of code serves a heartbeat."
@@ -124,7 +124,7 @@ export default function WhoWeArePage() {
       <section className="py-40 px-8 md:px-24 bg-zinc-950 text-white rounded-t-[4rem] md:rounded-t-[6rem]">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-32">
-            <h2 className="text-7xl md:text-[9vw] font-black uppercase tracking-tighter leading-[0.8] italic">
+            <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.8]">
               The <br /> Architects
             </h2>
             <div className="max-w-xs text-zinc-500 text-[10px] uppercase tracking-[0.4em] font-black leading-loose">
@@ -173,9 +173,9 @@ export default function WhoWeArePage() {
       </section>
 
       {/* 5. CTA SECTION */}
-      <section className="py-48 px-8 text-center bg-white dark:bg-bg-dark">
+      <section className="py-48 px-4 text-center bg-white dark:bg-bg-dark">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="max-w-4xl mx-auto space-y-16">
-          <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter italic leading-[0.85]">
+          <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.85]">
             Architecting <br /> <span className="text-zinc-200 dark:text-zinc-900 transition-colors">Digital Futures.</span>
           </h2>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-8">

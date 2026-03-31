@@ -48,7 +48,7 @@ export default function ProjectsPage() {
   return (
     <div className="bg-(--background) text-(--foreground) transition-colors duration-700">
       {/* HEADER */}
-      <section className="pt-56 pb-32 px-8 md:px-24">
+      <section className="py-24 px-8 md:px-24">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 text-blue-600 mb-8">
             <div className="h-px w-12 bg-current" />
@@ -57,8 +57,11 @@ export default function ProjectsPage() {
             </span>
           </div>
 
-          <h1 className="text-[10vw] md:text-[8vw] font-black italic leading-[0.8] mb-12">
-            The <span className="opacity-30">Portfolio</span>
+          <h1 className="text-[10vw] md:text-[8vw] font-black leading-[0.8] mb-12">
+            The {" "}
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-blue-500 to-indigo-400 dark:from-blue-500 dark:to-zinc-400">
+              portfolio
+            </span>
           </h1>
 
           <div className="grid md:grid-cols-2 gap-12 border-t border-(--border) pt-12">
