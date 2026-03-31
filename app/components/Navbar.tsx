@@ -144,7 +144,7 @@ const Navbar = () => {
             onClick={() => setIsOpen(false)} // click anywhere closes
           >
             {/* Overlay */}
-            <div className="absolute inset-0" />
+            <div className="absolute inset-0 mt-20" />
 
             {/* Menu panel */}
             <motion.div 
@@ -163,7 +163,7 @@ const Navbar = () => {
                 <div className="flex flex-col border-y border-zinc-100 dark:border-white/5 py-2">
                   <button 
                     onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                    className="flex items-center justify-between text-3xl font-semibold uppercase tracking-tighter py-2 dark:text-zinc-50 text-zinc-950"
+                    className="flex items-center justify-between text-2xl font-semibold uppercase tracking-tighter py-2 dark:text-zinc-50 text-zinc-950"
                   >
                     Services
                     <FaChevronDown className={`transition-transform duration-300 text-blue-600 ${mobileServicesOpen ? "rotate-180" : ""}`} size={20} />
@@ -237,7 +237,7 @@ const MobileNavLink = ({ link, pathname, setIsOpen }: any) => (
     <Link 
       href={link.href} 
       onClick={() => setIsOpen(false)} 
-      className={`text-3xl font-semibold uppercase tracking-tighter py-2 block ${
+      className={`text-2xl font-semibold uppercase tracking-tighter py-2 block ${
         pathname === link.href ? "text-blue-600" : "dark:text-zinc-50 text-zinc-950"
       }`}
     >

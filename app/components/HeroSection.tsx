@@ -59,7 +59,7 @@ export default function Home() {
           className="text-5xl md:text-8xl font-black tracking-tighter mb-6 uppercase leading-[0.85] 
             text-zinc-900 dark:text-zinc-100 transition-colors duration-500"
         >
-          Bold Ideas,
+          Bold Ideas
           <br />
           <span className="text-blue-600 dark:text-blue-500">Real Impact</span>
         </motion.h1>
