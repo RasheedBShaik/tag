@@ -75,7 +75,7 @@ export default function Home() {
         >
           At{" "}
           <span className="font-black text-black dark:text-white underline decoration-blue-600/50 underline-offset-4">
-            The TAG V.P.
+            The TAG VENTURES
           </span>
           , we combine intelligence and innovation to build solutions that
           matter—fast, measurable, and impactful.

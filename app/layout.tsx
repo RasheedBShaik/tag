@@ -25,7 +25,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "The TAG V.P. | Architects of Tomorrow",
+  title: "TAG VENTURES | Architects of Tomorrow",
   description: "A millennial-driven collective of innovators and creators.",
 };
 
