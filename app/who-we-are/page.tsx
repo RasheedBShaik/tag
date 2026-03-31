@@ -70,7 +70,7 @@ export default function WhoWeArePage() {
               className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.8] mb-12"
             >
               The <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 dark:from-blue-400 dark:via-blue-300 dark:to-zinc-500">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 dark:from-blue-400 dark:via-blue-300 dark:to-zinc-500">
                 collective
               </span>
             </motion.h1>
