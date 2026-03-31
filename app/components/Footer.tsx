@@ -17,7 +17,7 @@ const Footer = () => {
   return (
     <footer className="relative py-12 md:py-20 px-6 border-t border-zinc-200 dark:border-white/5 bg-white dark:bg-[#050505] transition-colors duration-500 overflow-hidden text-zinc-900 dark:text-white">
       {/* Background accent - subtle glow */}
-      <div className="absolute top-0 right-0 w-50 md:w-75 h-50 md:h-75 bg-blue-600/5 blur-[80px] md:blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[200px] md:w-75 h-50 md:h-75 bg-blue-600/5 blur-[80px] md:blur-[120px] pointer-events-none" />
       
       <div className="max-w-7xl mx-auto">
         {/* TOP SECTION: VISION STATEMENT */}

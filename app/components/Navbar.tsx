@@ -28,7 +28,6 @@ const Navbar = () => {
     { name: "Health & Wellness", slug: "/services/health" },
   ];
 
-  // Split nav links to sandwich Services in the middle (3rd place)
   const leftLinks = [
     { name: "Home", href: "/" },
     { name: "Who We Are", href: "/who-we-are" },
@@ -43,20 +42,17 @@ const Navbar = () => {
   if (!mounted) return <div className="h-20" />;
 
   return (
-    <nav className="fixed top-0 w-full z-100 pb-4">
+    <nav className="fixed top-0 w-full z-200 pb-4"> {/* increased z-index */}
       <div className="px-6 py-3 border dark:bg-zinc-950/80 bg-white/80 backdrop-blur-xl border-zinc-200 dark:border-white/10 shadow-lg transition-all duration-500">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           
-          {/* LOGO */}
           <Link href="/" className="group flex items-center gap-2 outline-none">
             <span className="text-lg md:text-xl font-black uppercase tracking-tighter dark:text-zinc-50 text-zinc-950 italic">
               TAG<span className="text-blue-600 group-hover:text-blue-500 transition-colors">VENTURES</span>
             </span>
           </Link>
 
-          {/* DESKTOP NAV */}
           <div className="hidden lg:flex items-center gap-1" onMouseLeave={() => setHoveredPath(null)}>
-            {/* Left side links */}
             {leftLinks.map((link) => (
               <NavLink 
                 key={link.name} 
@@ -67,7 +63,6 @@ const Navbar = () => {
               />
             ))}
 
-            {/* SERVICES DROPDOWN (3rd Place) */}
             <div 
               className="relative"
               onMouseEnter={() => setIsServicesOpen(true)}
@@ -106,7 +101,6 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
 
-            {/* Right side links */}
             {rightLinks.map((link) => (
               <NavLink 
                 key={link.name} 
@@ -118,8 +112,8 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* CONTROLS */}
-          <div className="flex items-center gap-2 md:gap-4">
+          {/* Controls always above */}
+          <div className="relative z-300 flex items-center gap-2 md:gap-4">
             <motion.button
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.9 }}
@@ -130,7 +124,7 @@ const Navbar = () => {
             </motion.button>
 
             <button 
-              className="lg:hidden p-2.5 rounded-xl dark:bg-white/5 bg-white border dark:border-white/10 border-zinc-200 z-110"
+              className="lg:hidden p-2.5 rounded-xl dark:bg-white/5 bg-white border dark:border-white/10 border-zinc-200"
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? <FaXmark size={18} /> : <FaBars size={18} />}
@@ -143,56 +137,66 @@ const Navbar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 w-full h-screen dark:bg-zinc-950 bg-white lg:hidden z-99 pt-28 px-8 overflow-y-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-150 lg:hidden"
+            onClick={() => setIsOpen(false)} // click anywhere closes
           >
-            <div className="flex flex-col gap-4 max-w-md">
-              {/* Home & Who We Are */}
-              {leftLinks.map((link) => (
-                <MobileNavLink key={link.name} link={link} pathname={pathname} setIsOpen={setIsOpen} />
-              ))}
+            {/* Overlay */}
+            <div className="absolute inset-0" />
 
-              {/* Mobile Services Accordion */}
-              <div className="flex flex-col border-y border-zinc-100 dark:border-white/5 py-2">
-                <button 
-                  onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                  className="flex items-center justify-between text-3xl font-black uppercase tracking-tighter py-2 dark:text-zinc-50 text-zinc-950"
-                >
-                  Services
-                  <FaChevronDown className={`transition-transform duration-300 text-blue-600 ${mobileServicesOpen ? "rotate-180" : ""}`} size={20} />
-                </button>
-                
-                <AnimatePresence>
-                  {mobileServicesOpen && (
-                    <motion.div 
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden flex flex-col gap-3 pl-4 pt-2 pb-4"
-                    >
-                      {services.map((service) => (
-                        <Link 
-                          key={service.name} 
-                          href={service.slug} 
-                          onClick={() => setIsOpen(false)}
-                          className="text-lg font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 active:text-blue-600"
-                        >
-                          {service.name}
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+            {/* Menu panel */}
+            <motion.div 
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+              className="absolute right-0 top-15 w-full h-full dark:bg-zinc-950 bg-white pt-8 px-8"
+            >
+              <div className="flex flex-col gap-4 max-w-md ">
+                {leftLinks.map((link) => (
+                  <MobileNavLink key={link.name} link={link} pathname={pathname} setIsOpen={setIsOpen} />
+                ))}
+
+                <div className="flex flex-col border-y border-zinc-100 dark:border-white/5 py-2">
+                  <button 
+                    onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                    className="flex items-center justify-between text-3xl font-semibold uppercase tracking-tighter py-2 dark:text-zinc-50 text-zinc-950"
+                  >
+                    Services
+                    <FaChevronDown className={`transition-transform duration-300 text-blue-600 ${mobileServicesOpen ? "rotate-180" : ""}`} size={20} />
+                  </button>
+                  
+                  <AnimatePresence>
+                    {mobileServicesOpen && (
+                      <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden flex flex-col gap-3 pl-4 pt-2 pb-4"
+                      >
+                        {services.map((service) => (
+                          <Link 
+                            key={service.name} 
+                            href={service.slug} 
+                            onClick={() => setIsOpen(false)}
+                            className="text-lg font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 active:text-blue-600"
+                          >
+                            {service.name}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {rightLinks.map((link) => (
+                  <MobileNavLink key={link.name} link={link} pathname={pathname} setIsOpen={setIsOpen} />
+                ))}
               </div>
-
-              {/* Insights, Portfolio, Contact */}
-              {rightLinks.map((link) => (
-                <MobileNavLink key={link.name} link={link} pathname={pathname} setIsOpen={setIsOpen} />
-              ))}
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -216,15 +220,12 @@ const NavLink = ({ link, pathname, hoveredPath, setHoveredPath }: any) => {
         <motion.div
           layoutId="nav-hover"
           className="absolute inset-0 bg-zinc-100 dark:bg-white/5 rounded-lg z-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
         />
       )}
       {isActive && (
         <motion.div 
           layoutId="nav-active-line"
-          className="absolute bottom-0 left-4 right-4 h-0.5 bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.6)]" 
+          className="absolute bottom-0 left-4 right-4 h-0.5 bg-blue-600" 
         />
       )}
     </Link>
@@ -236,7 +237,7 @@ const MobileNavLink = ({ link, pathname, setIsOpen }: any) => (
     <Link 
       href={link.href} 
       onClick={() => setIsOpen(false)} 
-      className={`text-3xl font-black uppercase tracking-tighter py-2 block ${
+      className={`text-3xl font-semibold uppercase tracking-tighter py-2 block ${
         pathname === link.href ? "text-blue-600" : "dark:text-zinc-50 text-zinc-950"
       }`}
     >
