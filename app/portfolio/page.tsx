@@ -7,23 +7,22 @@ import Link from "next/link";
 // import ProjectCard from "./components/ProjectCard"; 
 
 export const revalidate = 30;
-
 async function getProjects() {
   const query = `*[_type == "projects"] | order(_createdAt desc) {
     "id": _id,
     title,
-    "client": client, // adjust if your schema field is different
+    "client": client,
     "category": tags[0], 
     "year": year,
-    "image": mainImage.asset->url,
+    // Note the path change here:
+    "image": coalesce(mainImage.asset->url, mainImage.externalUrl),
     description,
-    "impact": impact, // Ensure this field exists in your schema
+    "impact": impact,
     "tags": tags,
     "slug": slug.current
   }`;
   return await client.fetch(query);
 }
-
 export default async function ProjectsPage() {
   const projects = await getProjects();
 

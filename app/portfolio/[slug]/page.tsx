@@ -12,7 +12,7 @@ async function getProject(slug: string) {
     year,
     impact,
     description,
-    "image": mainImage.asset->url,
+    "image": coalesce(mainImage.asset->url, mainImage.externalImageUrl),
     projectUrl,
     githubUrl,
     tags,
