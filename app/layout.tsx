@@ -1,50 +1,62 @@
-import type { Metadata } from "next";
-import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google"; // High-end tech trio
+"use client"; 
+
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes"; 
 import Navbar from "./components/Navbar"; 
 import Footer from "./components/Footer";
+import { usePathname } from "next/navigation";
 
-// Display font for those massive italic headers
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["300", "500", "700"],
 });
 
-// Clean, readable body font
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
 
-// Sharp mono for your "Registry" and "System_Init" labels
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
 });
-
-export const metadata: Metadata = {
-  title: "TAG VENTURES | Architects of Tomorrow",
-  description: "A millennial-driven collective of innovators and creators.",
-};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  
+  // Check if the current route starts with /studio
+  const isAdmin = pathname.startsWith("/admin");
+
   return (
     <html
       lang="en"
+      // This stays here to handle the <html> attributes (like class="dark")
       suppressHydrationWarning 
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className={`${inter.variable} min-h-full flex flex-col bg-(--background) text-(--foreground) transition-colors duration-500 font-sans`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <Navbar />
+      <body 
+        // ADD THIS: suppresses the script-injection warning from next-themes
+        suppressHydrationWarning={true}
+        className={`${inter.variable} min-h-full flex flex-col bg-(--background) text-(--foreground) transition-colors duration-500 font-sans`}
+      >
+        <ThemeProvider 
+          attribute="class" 
+          defaultTheme="dark" 
+          enableSystem={false}
+        >
+          {/* Only show Navbar if NOT in Sanity Studio */}
+          {!isAdmin && <Navbar />}
+          
           <main className="grow">{children}</main>
-          <Footer/>
+          
+          {/* Only show Footer if NOT in Sanity Studio */}
+          {!isAdmin && <Footer/>}
         </ThemeProvider>
       </body>
     </html>

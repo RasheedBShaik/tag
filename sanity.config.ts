@@ -9,7 +9,7 @@ export default defineConfig({
   title: 'th3tag-official',
   projectId: 'y2ursieu',
   dataset: 'production',
-  basePath: '/studio',
+  basePath: '/admin',
   plugins: [
     structureTool(), 
     visionTool()

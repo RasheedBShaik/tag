@@ -1,8 +1,8 @@
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
-  name: 'project',
-  title: 'Project',
+  name: 'projects',
+  title: 'Projects',
   type: 'document',
   fields: [
     defineField({
@@ -20,6 +20,24 @@ export default defineType({
         maxLength: 96,
       },
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'client',
+      title: 'Client / Partner Name',
+      type: 'string',
+      placeholder: 'e.g., HealthTech Global',
+    }),
+    defineField({
+      name: 'year',
+      title: 'Project Year',
+      type: 'number', // Changed to number for easier rendering
+      placeholder: "2025",
+    }),
+    defineField({
+      name: 'impact',
+      title: 'Impact Metric',
+      type: 'string',
+      placeholder: 'e.g., 40% faster diagnosis',
     }),
     defineField({
       name: 'mainImage',
