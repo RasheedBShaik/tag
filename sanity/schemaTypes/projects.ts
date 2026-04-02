@@ -32,12 +32,14 @@ export default defineType({
       title: 'Project Year',
       type: 'number', // Changed to number for easier rendering
       placeholder: "2025",
+
     }),
     defineField({
       name: 'impact',
       title: 'Impact Metric',
       type: 'string',
       placeholder: 'e.g., 40% faster diagnosis',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'mainImage',
@@ -46,6 +48,7 @@ export default defineType({
       options: {
         hotspot: true,
       },
+      validation: (Rule) => Rule.required(),
       fields: [
         {
           name: 'alt',
@@ -68,6 +71,7 @@ export default defineType({
       title: 'Project Description',
       type: 'text',
       rows: 3,
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'projectUrl',
@@ -83,6 +87,7 @@ export default defineType({
       name: 'content',
       title: 'Content',
       type: 'array',
+      validation: (Rule) => Rule.required(),
       of: [{ type: 'block' }, { type: 'image' }],
     }),
   ],

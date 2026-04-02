@@ -6,6 +6,8 @@ import Link from "next/link";
 // We move motion to a separate client component or use a simple wrapper
 // import ProjectCard from "./components/ProjectCard"; 
 
+export const revalidate = 30;
+
 async function getProjects() {
   const query = `*[_type == "projects"] | order(_createdAt desc) {
     "id": _id,
