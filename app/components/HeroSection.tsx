@@ -1,125 +1,165 @@
 "use client";
 
-import { motion, Variants } from "framer-motion";
-import { useTheme } from "next-themes";
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { gsap } from "gsap";
+import { ArrowRight, Terminal, Activity } from "lucide-react";
 
-export default function Home() {
-  const { theme } = useTheme();
+/* ---------------------- 1. PARAMETRIC SVG ANIMATION ---------------------- */
+
+const HeroArchitecture = () => {
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const paths = svgRef.current?.querySelectorAll(".hero-path");
+      const nodes = svgRef.current?.querySelectorAll(".grid-node");
+
+      if (paths) {
+        // Initial drawing of the blueprint
+        gsap.set(paths, { strokeDasharray: 1000, strokeDashoffset: 1000, opacity: 0 });
+        
+        gsap.to(paths, {
+          strokeDashoffset: 0,
+          opacity: (i) => (i % 3 === 0 ? 0.7 : 0.2),
+          duration: 3,
+          stagger: 0.04,
+          ease: "expo.out",
+        });
+
+        // Unique: Floating "Data Nodes" animation
+        if (nodes) {
+          gsap.set(nodes, { scale: 0, opacity: 0 });
+          gsap.to(nodes, {
+            scale: 1,
+            opacity: 0.8,
+            duration: 1,
+            stagger: {
+              amount: 2,
+              grid: [10, 10],
+              from: "center"
+            },
+            delay: 1.5,
+            ease: "back.out(2)"
+          });
+
+          // Continuous pulsing effect
+          gsap.to(nodes, {
+            opacity: 0.2,
+            duration: "random(1, 3)",
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+        }
+      }
+    }, svgRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {/* Background Gradient for Contrast */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(30,64,175,0.15)_0%,transparent_80%)]" />
+      
+      <svg 
+        ref={svgRef} 
+        viewBox="0 0 1000 1000" 
+        preserveAspectRatio="xMidYMid slice"
+        className="w-full h-full text-blue-800 dark:text-blue-500" 
+        fill="none" 
+        stroke="currentColor" 
+        strokeWidth="1.2"
+      >
+        {/* The Radial Web */}
+        {Array.from({ length: 24 }).map((_, i) => (
+          <path 
+            key={`v-${i}`} 
+            className="hero-path" 
+            d={`M${i * (1000/23)} 0 C 500 300, 500 700, ${1000 - i * (1000/23)} 1000`} 
+          />
+        ))}
+
+        {/* Intersection Nodes (The "Data Points") */}
+        {Array.from({ length: 6 }).map((_, row) => 
+          Array.from({ length: 6 }).map((_, col) => (
+            <circle 
+              key={`node-${row}-${col}`}
+              className="grid-node fill-blue-800 dark:fill-blue-400"
+              cx={200 + col * 120}
+              cy={200 + row * 120}
+              r="2"
+              stroke="none"
+            />
+          ))
+        )}
+      </svg>
+      
+      {/* Bottom Fade */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#fcfcfc] dark:to-[#0a0a0a]" />
+    </div>
+  );
+};
+
+/* ---------------------- 2. ASSEMBLY INTERFACE ---------------------- */
+
+export default function HeroSection() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
+  const textVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: (i: number) => ({
       y: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
-    },
+      opacity: 1,
+      transition: { delay: 0.5 + i * 0.1, duration: 0.8, ease: "easeOut" as const }
+    })
   };
 
-  if (!mounted) return <main className="min-h-screen bg-white dark:bg-zinc-950" />;
+  if (!mounted) return null;
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center overflow-hidden transition-colors duration-500 bg-white dark:bg-zinc-950 selection:bg-blue-500/30">
-      
-      {/* 1. BACKGROUND VIDEO */}
-      <div className="absolute inset-0 z-0">
-        <video autoPlay loop muted playsInline className="h-full w-full object-cover">
-          <source src="/hero/hero-bg-new.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 z-10 bg-white/10 dark:bg-zinc-950/40  transition-all duration-700" />
-      </div>
-      {/* 2. THE PARENT TEXT CONTAINER */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 max-w-5xl mx-6 p-8 md:p-16 rounded-4xl transition-all duration-500
-          /* Parent shifts background based on theme */
-          bg-white/40 border border-black/5 backdrop-blur-md
-          dark:bg-zinc-900/40 dark:border-white/10 dark:backdrop-blur-xl
-          text-center shadow-2xl"
-      >
-        {/* MAIN TITLE */}
-        <motion.h1
-          variants={itemVariants}
-          className="text-5xl md:text-8xl font-black tracking-tighter mb-6 uppercase leading-[0.85] 
-            text-zinc-900 dark:text-zinc-100 transition-colors duration-500"
-        >
-          Bold Ideas
-          <br />
-          <span className="text-blue-600 dark:text-blue-500">Real Impact</span>
-        </motion.h1>
+    <section className="relative min-h-screen flex items-center justify-center bg-[#fcfcfc] dark:bg-[#0a0a0a] overflow-hidden">
+      <HeroArchitecture />
 
-        {/* DESCRIPTION */}
-        <motion.p
-          variants={itemVariants}
-          className="text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed 
-            font-medium transition-colors duration-500
-            text-zinc-800 dark:text-zinc-200
-            drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)] 
-            dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-        >
-          At{" "}
-          <span className="font-black text-black dark:text-white underline decoration-blue-600/50 underline-offset-4">
-            The TAG VENTURES
-          </span>
-          , we combine intelligence and innovation to build solutions that
-          matter—fast, measurable, and impactful.
-        </motion.p>
-
-        {/* 3. BUTTONS */}
-        <motion.div
-          variants={itemVariants}
-          className="flex flex-col sm:flex-row justify-center items-center gap-5"
-        >
-          {/* PRIMARY BUTTON */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            className="group relative px-12 py-5 overflow-hidden rounded-full transition-all duration-300
-              bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 
-              font-black uppercase tracking-[0.2em] text-[10px] cursor-pointer shadow-xl"
+      <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+        
+        {/* MAIN TEXT */}
+        <div className="space-y-4 mb-12">
+          <motion.h1 
+            custom={1} variants={textVariants} initial="hidden" animate="visible"
+            className="text-[10vw] md:text-8xl font-bold tracking-tight text-zinc-950 dark:text-white"
           >
-            <Link href="/portfolio">
-            <span className="relative z-10 group-hover:text-white transition-colors duration-300">
-              Explore Work
-            </span>
-            </Link>
-            <div className="absolute inset-0 bg-blue-600 -translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-          </motion.button>
-
-          {/* SECONDARY BUTTON */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            className="group relative px-12 py-5 border overflow-hidden rounded-full transition-all duration-300
-              border-zinc-950/20 dark:border-white/20 
-              text-zinc-950 dark:text-white 
-              font-black uppercase tracking-[0.2em] text-[10px] cursor-pointer backdrop-blur-sm"
+            Precision <br />
+            <span className="font-serif  text-blue-800 dark:text-blue-500">Architected.</span>
+          </motion.h1>
+          
+          <motion.p 
+            custom={2} variants={textVariants} initial="hidden" animate="visible"
+            className="max-w-xl mx-auto text-lg text-zinc-500 dark:text-zinc-400 font-light"
           >
-            <Link href="/contact">
-            <span className="relative z-10 group-hover:text-white dark:group-hover:text-zinc-950 transition-colors duration-300">
-              Get in Touch
-            </span>
-            </Link>
-            <div className="absolute inset-0 bg-zinc-950 dark:bg-white -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-          </motion.button>
+            Synthesizing complex logic into high-performance digital infrastructure.
+          </motion.p>
+        </div>
+
+        {/* CTAs */}
+        <motion.div 
+          custom={3} variants={textVariants} initial="hidden" animate="visible"
+          className="flex flex-col sm:flex-row gap-6 justify-center"
+        >
+          <Link href="/portfolio" className="group px-10 py-4 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-full font-bold text-[11px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 transition-transform">
+            View Portfolio <ArrowRight size={16} />
+          </Link>
+          <Link href="/contact" className="px-10 py-4 border border-zinc-200 dark:border-zinc-800 rounded-full font-bold text-[11px] uppercase tracking-widest text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all">
+            Contact
+          </Link>
         </motion.div>
-      </motion.div>
-    </main>
+      </div>
+
+    </section>
   );
 }

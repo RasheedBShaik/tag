@@ -169,9 +169,9 @@ const FrameworkCarousel = () => {
 
           <h3 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9] text-zinc-900 dark:text-white max-w-5xl">
             The Heart, Mind & Technology <br />
-            <span className="text-zinc-200 dark:text-zinc-800 font-light">
+            
               Framework in Action.
-            </span>
+            
           </h3>
         </div>
 

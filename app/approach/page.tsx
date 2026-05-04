@@ -1,192 +1,296 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { motion, Variants } from "framer-motion";
-import { useTheme } from "next-themes";
-import {
-  ArrowRight,
-  Download,
-  Target,
-  Zap,
-  Layers,
-  Users,
-  LineChart,
-  Activity,
+import React, { useEffect, useRef } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { 
+  ArrowRight, Share2, Terminal, Zap, Shield, Fingerprint, ChevronRight
 } from "lucide-react";
-import Link from "next/link";
+import HeartMindTechnology from "../components/HeartMindTechnology";
 
-/* ---------------------- ANIMATION VARIANTS ---------------------- */
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
-  },
-};
+/* ---------------------- 1. ENHANCED HERO ARCHITECTURE ---------------------- */
 
-const staggerContainer: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
-};
-
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
-  },
-};
-
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: { 
-    opacity: 1, 
-    transition: { staggerChildren: 0.2, delayChildren: 0.1 } 
-  },
-};
-
-export default function OurApproachPage() {
-  const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+const HeroArchitecture = () => {
+  const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    setMounted(true);
+    const ctx = gsap.context(() => {
+      const paths = svgRef.current?.querySelectorAll(".hero-path");
+      const nodes = svgRef.current?.querySelectorAll(".hero-node");
+      
+      if (paths) {
+        // Updated strokeDasharray to 3000 to cover the ~2638px circumference of the outer circle
+        gsap.fromTo(paths, 
+          { 
+            strokeDasharray: 3000, 
+            strokeDashoffset: 3000, 
+            opacity: 0 
+          },
+          { 
+            strokeDashoffset: 0, 
+            opacity: (i) => (i % 2 === 0 ? 0.4 : 0.1), 
+            duration: 2.5, 
+            stagger: { amount: 1.5, from: "start" }, 
+            ease: "power4.inOut",
+            onComplete: () => {
+              // Removes dash properties after completion to ensure circles are fully closed
+              gsap.set(paths, { clearProps: "strokeDasharray,strokeDashoffset" });
+            }
+          }
+        );
+      }
+
+      if (nodes) {
+        gsap.fromTo(nodes,
+          { scale: 0, opacity: 0 },
+          { 
+            scale: 1, 
+            opacity: 1, 
+            duration: 0.8, 
+            stagger: { amount: 1, from: "random" },
+            ease: "back.out(1.7)",
+            delay: 1
+          }
+        );
+      }
+    }, svgRef);
+    
+    return () => ctx.revert();
   }, []);
 
-  if (!mounted)
-    return <div className="min-h-screen bg-white dark:bg-zinc-950" />;
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none pt-10 z-0 flex items-center justify-center">
+      <svg 
+        ref={svgRef}
+        viewBox="0 0 1000 1000"
+        className="w-[120%] h-[120%] md:w-full md:h-full  text-blue-900 dark:text-blue-500"
+        fill="none" 
+        stroke="currentColor" 
+        strokeWidth="1"
+      >
+        {/* Radial Perspective Lines */}
+        <g>
+          {Array.from({ length: 24 }).map((_, i) => {
+            const angle = (i * Math.PI * 2) / 24;
+            const x2 = (500 + 700 * Math.cos(angle)).toFixed(3);
+            const y2 = (500 + 700 * Math.sin(angle)).toFixed(3);
+            return (
+              <path 
+                key={`radial-${i}`}
+                d={`M500,500 L${x2},${y2}`}
+                className="hero-path opacity-20"
+                strokeWidth="0.5"
+              />
+            );
+          })}
+        </g>
+
+        {/* Structural Rings */}
+        {/* Note: the first circle keeps its dash via inline strokeDasharray even after clearProps */}
+        <circle cx="500" cy="500" r="120" className="hero-path" strokeDasharray="4 8" />
+        <circle cx="500" cy="500" r="280" className="hero-path opacity-10" />
+        <circle cx="500" cy="500" r="420" className="hero-path opacity-30" strokeWidth="0.5" />
+
+        {/* Core Intersection Nodes */}
+        {[120, 280, 420].map((r, ringIdx) => 
+          Array.from({ length: 8 }).map((_, i) => {
+            const angle = (i * Math.PI * 2) / 8;
+            const cx = (500 + r * Math.cos(angle)).toFixed(3);
+            const cy = (500 + r * Math.sin(angle)).toFixed(3);
+            return (
+              <circle 
+                key={`node-${ringIdx}-${i}`} 
+                cx={cx} cy={cy} r={ringIdx === 0 ? 3 : 2} 
+                fill="currentColor" 
+                className="hero-node" 
+              />
+            );
+          })
+        )}
+
+        {/* Central Identity Square */}
+        <rect x="440" y="440" width="120" height="120" className="hero-path" rx="2" strokeWidth="1.5" />
+        <path d="M440,440 L400,400 M560,440 L600,400 M440,560 L400,600 M560,560 L600,600" className="hero-path opacity-40" />
+      </svg>
+      <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-[#fcfcfc] dark:to-[#0a0a0a] opacity-80" />
+    </div>
+  );
+};
+
+/* ---------------------- 2. STABILIZED BLUEPRINT SVG ---------------------- */
+
+const BlueprintSVG = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const targets = svgRef.current?.querySelectorAll("path, circle, rect, polyline");
+      
+      if (targets && targets.length > 0) {
+        gsap.fromTo(targets, 
+          {
+            strokeDasharray: 1000,
+            strokeDashoffset: 1000,
+            opacity: 0,
+          },
+          {
+            strokeDashoffset: 0,
+            opacity: 1,
+            duration: 1.5,
+            stagger: 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: svgRef.current,
+              start: "top 90%",
+              toggleActions: "play none none reverse",
+            },
+            onComplete: () => {
+              gsap.set(targets, { clearProps: "strokeDasharray,strokeDashoffset" });
+            }
+          }
+        );
+      }
+    }, svgRef);
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <div className="min-h-screen font-sans selection:bg-blue-500/30 transition-colors duration-500 text-zinc-950 dark:text-zinc-50 overflow-x-hidden">
-      
-      {/* 1. HERO SECTION */}
-      <section className="relative h-[90vh] top-10 w-full flex items-center overflow-hidden bg-white dark:bg-zinc-950">
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="h-full w-full object-cover"
-          >
-            <source src="/our-approach/our-approach.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 z-10 bg-white/10 dark:bg-zinc-950/40  transition-all duration-700" />
-        </div>
+    <svg 
+      ref={svgRef} 
+      viewBox="0 0 400 400" 
+      fill="none" 
+      stroke="currentColor" 
+      className={`text-blue-600/30 dark:text-blue-400/20 stroke-[1.5] ${className}`}
+      style={{ overflow: 'visible' }}
+    >
+      {children}
+    </svg>
+  );
+};
 
-        <div className="relative z-30 w-full pt-24 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
-          <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
-            <motion.nav variants={fadeInUp} className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-zinc-500 dark:text-zinc-400 mb-8 font-black">
-              <span className="hover:text-blue-600 cursor-pointer transition-colors">Home</span>
-              <span>/</span>
-              <span className="text-blue-600 dark:text-blue-500">Our Approach</span>
-            </motion.nav>
+/* ---------------------- 3. MAIN PAGE ---------------------- */
 
-            <motion.h1 variants={fadeInUp} className="text-5xl md:text-8xl lg:text-[9rem] font-black uppercase tracking-tighter leading-[0.85] mb-12">
-              Our <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-blue-500 to-indigo-400 dark:from-blue-500 dark:to-zinc-400">
-                Foundation
+export default function AestheticApproach() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+
+  return (
+    <div className="bg-[#fcfcfc] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100 transition-colors duration-500 overflow-x-hidden">
+      <motion.div style={{ scaleX }} className="fixed top-0 left-0 right-0 h-[2px] bg-blue-600 origin-left z-50" />
+
+      {/* HERO SECTION */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center">
+        <HeroArchitecture />
+        <div className="relative z-10 space-y-10 max-w-5xl">
+          <div className="space-y-6">
+            <span className="inline-block px-4 py-1.5 text-[10px] font-bold tracking-[0.3em] uppercase border border-blue-600/20 bg-white/50 dark:bg-black/50 backdrop-blur-sm text-blue-600 rounded-full">
+              Digital Framework v2.0
+            </span>
+            <h1 className="text-[10vw] md:text-8xl font-medium tracking-tight leading-[0.85]">
+              Precision <br/> <span className="font-serif italic font-light">Architected.</span>
+            </h1>
+            <p className="max-w-xl mx-auto text-lg md:text-xl text-zinc-500 dark:text-zinc-400 leading-relaxed font-light">
+              Converting complex vision into robust, scalable technological assets through multidisciplinary rigor.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button className="group relative px-8 py-4 bg-blue-600 text-white rounded-full overflow-hidden transition-all hover:pr-12 active:scale-95">
+              <span className="relative z-10 flex items-center gap-2 font-medium">
+                Insights <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
               </span>
-            </motion.h1>
-
-            <motion.p variants={fadeInUp} className="max-w-3xl text-xl md:text-3xl text-zinc-600 dark:text-zinc-400 leading-tight font-light tracking-tight">
-              Empowering Innovation Through <br />
-              <span className="text-zinc-950 dark:text-white font-medium italic underline decoration-blue-600/20 underline-offset-8">
-                Diverse Perspectives and Collaboration.
-              </span>
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 2. VISION & MISSION GRID */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 border-b border-zinc-100 dark:border-white/5 bg-white dark:bg-zinc-950 relative z-40">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-12 md:p-24 border-b lg:border-b-0 lg:border-r border-zinc-100 dark:border-white/5">
-          <span className="text-blue-600 font-black uppercase tracking-widest text-[10px] mb-6 block">01 / Vision</span>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-8 italic">Ethical <br /> Revolution</h2>
-          <p className="text-zinc-500 dark:text-zinc-400 text-lg leading-relaxed">To lead the ethical revolution by uniting Heart, Mind, and Technology.</p>
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-12 md:p-24 bg-zinc-50 dark:bg-zinc-900/10">
-          <span className="text-blue-600 font-black uppercase tracking-widest text-[10px] mb-6 block">02 / Mission</span>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-8 italic">Validated <br /> Outcomes</h2>
-          <p className="text-zinc-500 dark:text-zinc-400 text-lg leading-relaxed">We unite compassionate insight, strategic execution, and ethical innovation.</p>
-        </motion.div>
-      </section>
-
-      {/* 3. THE PROCESS */}
-      <section className="py-32 text-center max-w-7xl bg-white dark:bg-zinc-950">
-        <div className="mb-20">
-          <h2 className="text-sm font-black uppercase tracking-[0.3em] text-blue-600 dark:text-blue-500 mb-4">The Journey</h2>
-          <h3 className="text-4xl md:text-7xl font-black uppercase tracking-tighter leading-none">Transparency <br /> by Design</h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-200 dark:bg-white/10 border border-zinc-200 dark:border-white/10 rounded-[3rem] overflow-hidden">
-          {[
-            { title: "Deep Dive & Discovery", icon: <Target className="w-6 h-6" />, desc: "Understanding your vision, challenges, and culture." },
-            { title: "Co-Created Roadmap", icon: <Layers className="w-6 h-6" />, desc: "Architecting a strategic, actionable plan with clear milestones." },
-            { title: "Agile Implementation", icon: <Zap className="w-6 h-6" />, desc: "Implementing solutions in iterative sprints with constant feedback." },
-            { title: "Capability Transfer", icon: <Users className="w-6 h-6" />, desc: "Transferring knowledge for sustainable growth." },
-          ].map((step, i) => (
-            <div key={i} className="bg-white dark:bg-zinc-950 p-10 md:p-16 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors group">
-              <div className="text-blue-600 mb-8 group-hover:scale-110 transition-transform duration-500">{step.icon}</div>
-              <h4 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-4">{step.title}</h4>
-              <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-sm md:text-base">{step.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 4. PERFORMANCE METRICS (FIXED THEME - ALWAYS DARK) */}
-      <section className="py-32 px-6 bg-zinc-950 text-zinc-50 rounded-t-[3rem] md:rounded-t-[5rem]">
-        <div className="max-w-7xl mx-auto">
-          <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="mb-20">
-            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.85]">Success <br /> Metrics</h2>
-          </motion.div>
-
-          <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { label: "Human-Centric", value: "Design", icon: <Activity />, desc: "Focusing on customer loyalty, employee engagement, and a stronger culture." },
-              { label: "Strategic Value", value: "20–35%", icon: <LineChart />, desc: "Average increase in Technology ROI and measurable improvement in process optimization." },
-              { label: "Performance", value: "30–50%", icon: <Zap />, desc: "Targeted increase in innovation velocity and faster time-to-value." },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                variants={cardVariants}
-                whileHover={{ y: -10 }}
-                className="group border border-zinc-800 p-8 md:p-12 rounded-[2.5rem] flex flex-col justify-between min-h-87.5 bg-zinc-900/40 transition-all hover:border-blue-500/50"
-              >
-                <div>
-                  <div className="text-blue-500 mb-8 p-3 bg-blue-500/5 rounded-2xl w-fit group-hover:bg-blue-500 group-hover:text-white transition-all duration-500">{stat.icon}</div>
-                  <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-3">{stat.label}</h5>
-                  <div className="text-5xl md:text-6xl font-black tracking-tighter mb-8 group-hover:text-blue-500 transition-colors">{stat.value}</div>
-                </div>
-                <p className="text-zinc-400 text-sm leading-relaxed">{stat.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 5. CTA SECTION */}
-      <section className="py-40 px-6 text-center bg-white dark:bg-zinc-950">
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="max-w-4xl mx-auto">
-          <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-12 leading-[0.85]">
-            The Future is <br />
-            <span className="text-blue-600 font-black">Heart + Mind + Tech</span>
-          </h2>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
-            <Link href="/contact">
-            <button className="group w-full sm:w-auto px-12 py-6 bg-zinc-950 dark:bg-zinc-50 text-white dark:text-zinc-950 font-black uppercase tracking-widest text-[10px] rounded-full hover:bg-blue-600 dark:hover:bg-blue-600 dark:hover:text-white transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-3">
-              Connect with Experts <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <div className="absolute inset-0 bg-blue-500 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
-            </Link>
-            <button className="w-full sm:w-auto flex items-center justify-center gap-3 px-12 py-6 border border-zinc-200 dark:border-white/10 font-black uppercase tracking-widest text-[10px] rounded-full hover:bg-zinc-50 dark:hover:bg-white/5 transition-all">
-              <Download className="w-4 h-4" /> Download Brochure
+            <button className="px-8 py-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors flex items-center gap-2 font-medium">
+              Portfolio <ChevronRight size={18} className="text-blue-500" />
             </button>
           </div>
-        </motion.div>
+        </div>
+      </section>
+
+      {/* CORE DIMENSIONS */}
+      <div className="max-w-7xl mx-auto mt-10">
+        <HeartMindTechnology />
+      </div>
+
+      {/* RAPID SYNTHESIS & TRIANGLE SECTION */}
+      <section className="relative z-10 py-40 px-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-32 items-center">
+          <div className="space-y-8">
+            <div className="w-16 h-16 flex items-center justify-center bg-blue-600/10 rounded-2xl text-blue-600">
+              <Zap />
+            </div>
+            <h2 className="text-5xl font-medium tracking-tight">Rapid Synthesis</h2>
+            <p className="text-zinc-400 leading-relaxed italic text-lg font-light">Decoupling complexity from core execution to ensure zero-lag deployments.</p>
+          </div>
+          
+          <div className="relative aspect-square">
+            <BlueprintSVG className="w-full h-full">
+              <circle cx="200" cy="200" r="150" strokeDasharray="10 5" />
+              <rect x="120" y="120" width="160" height="160" rx="20" strokeWidth="2" className="text-blue-600" />
+            </BlueprintSVG>
+          </div>
+
+          <div className="relative aspect-square md:order-last">
+            <BlueprintSVG className="w-full h-full">
+              <path 
+                d="M50 300 L200 50 L350 300 Z" 
+                strokeWidth="2" 
+                className="text-blue-600" 
+                strokeLinejoin="round"
+              />
+              <circle cx="200" cy="215" r="78" strokeWidth="1.5" className="text-blue-500" strokeDasharray="4 4" />
+              <circle cx="200" cy="215" r="3" fill="currentColor" className="text-blue-600" />
+              <path d="M50 315 H350" strokeWidth="0.5" className="opacity-20" />
+            </BlueprintSVG>
+          </div>
+
+          <div className="space-y-8">
+            <div className="w-16 h-16 flex items-center justify-center bg-zinc-100 dark:bg-white/5 rounded-2xl text-blue-600">
+              <Shield />
+            </div>
+            <h2 className="text-5xl font-medium tracking-tight">Enterprise Safety</h2>
+            <p className="text-zinc-400 leading-relaxed italic text-lg font-light">Infrastructure designed for zero-drift security and immutable state management.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* CLARITY SECTION */}
+      <section className="relative z-10 py-40 bg-zinc-950 text-white overflow-hidden">
+        <div className="absolute inset-0 opacity-10 pointer-events-none z-0">
+           <svg width="100%" height="100%">
+             <pattern id="node-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+               <circle cx="2" cy="2" r="1" fill="#2563eb" />
+             </pattern>
+             <rect width="100%" height="100%" fill="url(#node-grid)" />
+           </svg>
+        </div>
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div>
+              <h2 className="text-6xl font-medium mb-6 tracking-tighter">Automated Clarity.</h2>
+              <p className="text-zinc-400 max-w-md">Eliminating the fog of data through real-time architectural insights.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {[
+              { icon: <Terminal />, t: "Edge Intelligence", d: "Sub-10ms response times via localized edge processing." },
+              { icon: <Share2 />, t: "Mesh Connectivity", d: "Interconnected systems sharing state with zero drift." },
+              { icon: <Fingerprint />, t: "Identity Core", d: "Privacy-first protocols built on zero-knowledge proofing." }
+            ].map((item, i) => (
+              <div key={i} className="p-10 border border-white/10 rounded-[2rem] bg-white/5 backdrop-blur-xl hover:bg-blue-600/5 transition-colors duration-500">
+                <div className="text-blue-500 mb-8">{item.icon}</div>
+                <h4 className="text-xl font-bold mb-4">{item.t}</h4>
+                <p className="text-zinc-500 text-sm leading-relaxed">{item.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
     </div>
   );

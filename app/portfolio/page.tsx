@@ -70,7 +70,7 @@ export default async function ProjectsPage() {
               <div className="relative aspect-16/10 group">
                 <img
                   src={project.image || "/api/placeholder/1200/800"}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-105"
+                  className="w-full h-full object-cover grayscale-0                md:grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-105"
                   alt={project.title}
                 />
                 <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition" />
