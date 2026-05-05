@@ -4,8 +4,9 @@ import React, { use, useRef, useMemo, useState, useEffect, memo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight } from "lucide-react";
-import { notFound } from "next/navigation";
+import { X, ArrowRight, ArrowLeft } from "lucide-react"; // Added ArrowLeft
+import { notFound, useRouter } from "next/navigation"; // Added useRouter
+import Link from "next/link"; // Added Link
 import { SERVICES_DATA } from "./data";
 import HeartMindTechnology from "@/app/components/HeartMindTechnology";
 
@@ -138,7 +139,22 @@ export default function ServiceSlugPage({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,var(--background)_90%)]" />
       </div>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-32">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-32">
+        {/* BACK BUTTON */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12"
+        >
+          <Link 
+            href="/services" 
+            className="group inline-flex items-center gap-3 px-6 py-3 rounded-full border border-(--border) bg-(--card) hover:border-(--accent) transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_-5px_var(--accent-glow)]"
+          >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="font-mono text-[10px] font-black uppercase tracking-[0.2em]">View All Services</span>
+          </Link>
+        </motion.div>
+
         {/* HERO */}
         <section className="mb-32">
           <motion.div
@@ -261,7 +277,6 @@ export default function ServiceSlugPage({
         </AnimatePresence>
 
         <footer className="py-40">
-          <HeartMindTechnology />
         </footer>
       </main>
     </div>

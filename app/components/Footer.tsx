@@ -21,7 +21,7 @@ const Footer = () => {
       
       <div className="max-w-7xl mx-auto">
         {/* TOP SECTION: VISION STATEMENT */}
-        <div className="mb-12 md:mb-16 border-b border-zinc-100 dark:border-white/5 pb-8 md:pb-12 text-center sm:text-left">
+        <div className="mb-12 mx-auto max-w-7xl md:mb-16 border-b border-zinc-100 dark:border-white/5 pb-8 md:pb-12 text-center sm:text-left">
           <h2 className="text-xl sm:text-2xl md:text-4xl font-black uppercase tracking-tighter ">
             <span className="text-blue-600">Heart</span> + Mind + <br className="sm:hidden" />
             <span className="text-zinc-400 dark:text-zinc-600">Technology</span>

@@ -32,6 +32,17 @@ export default async function ProjectDetails({ params }: { params: Promise<{ slu
       
       {/* 1. DYNAMIC HERO SECTION */}
       <section className="relative h-[85vh] mt-16 w-full overflow-hidden">
+        {/* BACK BUTTON */}
+        <Link 
+          href="/portfolio" 
+          className="absolute top-8 left-8 md:left-24 z-30 flex items-center gap-2 text-white/70 hover:text-white transition-colors group"
+        >
+          <div className="p-2 rounded-full border border-white/20 group-hover:border-white/50 transition-all">
+            <FiArrowLeft size={20} />
+          </div>
+          <span className="text-xs font-bold uppercase tracking-[0.2em]">Back to Portfolio</span>
+        </Link>
+
         <img
           src={project.image || "/api/placeholder/1920/1080"}
           alt={project.title}
@@ -105,17 +116,6 @@ export default async function ProjectDetails({ params }: { params: Promise<{ slu
               </a>
             )}
             
-            {project.githubUrl && (
-              <a 
-                href={project.githubUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-6 rounded-2xl border border-(--border) hover:bg-(--foreground) hover:text-(--background) transition-all duration-500 hover:translate-x-1"
-              >
-                <span className="font-bold uppercase tracking-widest text-sm">View Repository</span>
-                <FiGithub size={20} />
-              </a>
-            )}
           </div>
 
           <div className="space-y-4">

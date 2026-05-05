@@ -1,7 +1,7 @@
 import React from "react";
 // Import the client (adjust the path to your sanity/lib/client.ts)
 import { client } from "@/sanity/lib/client"; 
-import { Globe, Cpu, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Globe, Cpu, ArrowRight, ArrowUpRight, ArrowUp } from "lucide-react";
 import Link from "next/link";
 // We move motion to a separate client component or use a simple wrapper
 // import ProjectCard from "./components/ProjectCard"; 
@@ -29,18 +29,17 @@ export default async function ProjectsPage() {
   return (
     <div className="bg-(--background) text-(--foreground) transition-colors duration-700">
       {/* HEADER */}
-      <section className="py-24 px-8 md:px-24">
+      <section id="top" className="py-24 px-8 md:px-24">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 text-blue-600 mb-8">
             <div className="h-px w-12 bg-current" />
             <span className="text-[10px] font-bold uppercase tracking-[0.4em]">
-              Index_Selected_Works
+              Index Selected Works
             </span>
           </div>
 
           <h1 className="text-[10vw] md:text-[8vw] font-black leading-[0.8] mb-12">
-            The {" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-blue-500 to-indigo-400 dark:from-blue-500 dark:to-zinc-400">
+            <span className="uppercase text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-blue-500 to-indigo-400 dark:from-blue-500 dark:to-zinc-400">
               portfolio
             </span>
           </h1>
@@ -70,7 +69,7 @@ export default async function ProjectsPage() {
               <div className="relative aspect-16/10 group">
                 <img
                   src={project.image || "/api/placeholder/1200/800"}
-                  className="w-full h-full object-cover grayscale-0                md:grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-105"
+                  className="w-full h-full object-cover grayscale-0 md:grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-105"
                   alt={project.title}
                 />
                 <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition" />
@@ -132,6 +131,14 @@ export default async function ProjectsPage() {
             </div>
           </div>
         ))}
+        
+        {/* BACK TO TOP */}
+        <div className="flex justify-center pt-20">
+          <a href="#top" className="flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+            <ArrowUp size={24} className="text-blue-600" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em]">Back to Top</span>
+          </a>
+        </div>
       </main>
     </div>
   );

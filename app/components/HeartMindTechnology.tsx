@@ -6,7 +6,7 @@ const cardContent = [
   {
     icon: <Heart className="w-8 h-8 text-rose-500" />,
     name: "Heart",
-    description: "We build with empathy and fairness in design and delivery."
+    description: "We build with Heart and fairness in design and delivery."
   },
   {
     icon: <Brain className="w-8 h-8 text-blue-500" />,

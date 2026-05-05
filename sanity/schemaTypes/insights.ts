@@ -1,7 +1,17 @@
 import { defineField, defineType } from "sanity";
 import { Lightbulb } from "lucide-react";
 
-export default defineType({
+export const SECTOR_OPTIONS = [
+  { title: "Technology Advisory", value: "technology-advisory" },
+  { title: "Strategic Ventures", value: "strategic-ventures" },
+  { title: "Design Studio", value: "design-studio" },
+  { title: "Culinary Arts", value: "culinary-arts" },
+  { title: "Health and Wellness", value: "health-wellness" },
+  { title: "Research & Development", value: "research-development" },
+  { title: "Other / General", value: "other" },
+];
+
+export const insights = defineType({
   name: "insights",
   title: "Insights",
   type: "document",
@@ -17,9 +27,16 @@ export default defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
+      options: { source: "title", maxLength: 96 },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "sector",
+      title: "Primary Sector Filter",
+      type: "string",
       options: {
-        source: "title",
-        maxLength: 96,
+        list: SECTOR_OPTIONS,
+        layout: "dropdown",
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -30,42 +47,30 @@ export default defineType({
       initialValue: () => new Date().toISOString(),
     }),
     defineField({
-      name: "author",
-      title: "Author",
-      type: "reference",
-      to: [{ type: "team" }], // Links the insight to a team member
+      name: "tags",
+      title: "Secondary Tags",
+      type: "array",
+      of: [{ type: "string" }],
+      options: { layout: "tags" },
     }),
     defineField({
       name: "coverImage",
       title: "Cover Image",
       type: "image",
       options: { hotspot: true },
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "summary",
-      title: "Summary",
+      title: "Executive Summary",
       type: "text",
       rows: 3,
-      description: "Short excerpt for the listing page",
       validation: (Rule) => Rule.max(200),
-    }),
-    defineField({
-      name: "tags",
-      title: "Tags",
-      type: "array",
-      of: [{ type: "string" }],
-      options: { layout: "tags" },
     }),
     defineField({
       name: "body",
       title: "Content Body",
       type: "array",
-      of: [
-        { type: "block" },
-        { type: "image", options: { hotspot: true } }
-      ],
-      validation: (Rule) => Rule.required(),
+      of: [{ type: "block" }],
     }),
   ],
 });

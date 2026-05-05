@@ -7,6 +7,9 @@ import { Mail, Phone, MapPin, ArrowRight, CheckCircle2 } from "lucide-react";
 export default function ContactComponent() {
   const [submitted, setSubmitted] = useState(false);
 
+  // Google Maps URL for the specific address
+  const mapUrl = "https://www.google.com/maps/search/?api=1&query=574+Rita+Blanca+Dr,+Webster,+TX+77598";
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
@@ -28,7 +31,7 @@ export default function ContactComponent() {
             <span className="text-[10px] font-black uppercase tracking-[0.5em]">Initiate_Connection</span>
           </motion.div>
           
-          <h1 className="text-4xl md:text-8xl font-black tracking-tighter uppercase  mb-10">
+          <h1 className="text-4xl md:text-8xl font-black tracking-tighter uppercase mb-10">
             Let's Start a <br /> 
             <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-blue-500 to-indigo-400 dark:from-blue-500 dark:to-zinc-400">
               conversation
@@ -41,34 +44,57 @@ export default function ContactComponent() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
           
-          {/* LEFT: CONTACT DETAILS */}
-          <aside className="lg:col-span-4 flex flex-col justify-between py-4">
+          {/* LEFT: CONTACT DETAILS & MAP */}
+          <aside className="lg:col-span-4 space-y-12 py-4">
             <div className="space-y-12">
               <ContactItem 
                 label="Registry_Email" 
                 value="TheTAG.Partners@outlook.com" 
                 icon={<Mail size={18} />} 
                 isEmail 
+                href="mailto:TheTAG.Partners@outlook.com"
               />
               <ContactItem 
                 label="Secure_Line" 
                 value="+1 408 657 9877" 
                 icon={<Phone size={18} />} 
+                href="tel:+14086579877"
               />
               <ContactItem 
                 label="Physical_Node" 
                 value={<>574 Rita Blanca Dr, <br /> Webster, TX 77598</>} 
                 icon={<MapPin size={18} />} 
+                href={mapUrl}
               />
             </div>
 
-            <div className="hidden lg:block pt-12 border-t border-zinc-200 dark:border-white/5 mt-12">
+            {/* INTERACTIVE MINI MAP PREVIEW */}
+            <motion.a 
+              href={mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="relative block w-full h-48 md:h-64 rounded-3xl overflow-hidden border border-zinc-200 dark:border-white/10 group md:grayscale hover:grayscale-0 transition-all duration-700"
+            >
+              <iframe
+                title="Office Location"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3472.6375046200216!2d-95.1235123!3d29.5413146!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86409ba555555555%3A0x1d4a0a0a0a0a0a0a!2s574%20Rita%20Blanca%20Dr%2C%20Webster%2C%20TX%2077598!5e0!3m2!1sen!2sus!4v1715000000000!5m2!1sen!2sus"
+                className="w-full h-full border-0 pointer-events-none"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-blue-600/10 group-hover:bg-transparent transition-colors duration-500" />
+              <div className="absolute bottom-4 right-4 bg-white dark:bg-zinc-900 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                Open Maps <ArrowRight size={12} />
+              </div>
+            </motion.a>
+
+            <div className="hidden lg:block pt-12 border-t border-zinc-200 dark:border-white/5">
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Availability: 09:00 - 18:00 CST</p>
             </div>
           </aside>
 
           {/* RIGHT: THE INTERACTIVE FORM */}
-          {/* Light Theme: Pure white, crisp border, elegant shadow */}
           <div className="lg:col-span-8 bg-white dark:bg-white/2 p-8 md:p-16 rounded-4xl border border-zinc-200 dark:border-white/10 relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.04)] dark:shadow-none">
             
             {!submitted ? (
@@ -127,31 +153,35 @@ export default function ContactComponent() {
               </motion.div>
             )}
 
-            {/* DECORATIVE BACKGROUND GRID - Lowered opacity for cleaner light mode */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.02] dark:opacity-[0.05]" 
               style={{ backgroundImage: `radial-gradient(circle, #000 1px, transparent 1px)`, backgroundSize: '40px 40px' }} 
             />
           </div>
-
         </div>
       </div>
     </section>
   );
 }
 
-function ContactItem({ label, value, icon, isEmail = false }: any) {
+function ContactItem({ label, value, icon, isEmail = false, href }: any) {
+  const Wrapper = href ? "a" : "div";
+  
   return (
-    <div className="group cursor-pointer">
+    <Wrapper 
+      href={href} 
+      target={href?.startsWith('http') ? "_blank" : undefined}
+      className="group cursor-pointer block"
+    >
       <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-4 block group-hover:text-blue-600 transition-colors">{label}</span>
       <div className="flex items-start gap-4 text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 transition-colors">
         <div className="mt-1 text-zinc-300 dark:text-zinc-700 group-hover:text-blue-600 transition-colors">
           {icon}
         </div>
-        <span className={`text-lg font-bold tracking-tight uppercase leading-snug ${isEmail ? 'underline underline-offset-8 decoration-zinc-200 dark:decoration-zinc-800 group-hover:decoration-blue-600' : ''}`}>
+        <span className={`text-lg font-bold tracking-tight uppercase leading-snug ${isEmail || href ? 'underline underline-offset-8 decoration-zinc-200 dark:decoration-zinc-800 group-hover:decoration-blue-600' : ''}`}>
           {value}
         </span>
       </div>
-    </div>
+    </Wrapper>
   );
 }
 
