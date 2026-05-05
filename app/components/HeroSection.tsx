@@ -19,7 +19,7 @@ const HeroArchitecture = () => {
       if (paths) {
         // Initial drawing of the blueprint
         gsap.set(paths, { strokeDasharray: 1000, strokeDashoffset: 1000, opacity: 0 });
-        
+
         gsap.to(paths, {
           strokeDashoffset: 0,
           opacity: (i) => (i % 3 === 0 ? 0.7 : 0.2),
@@ -62,29 +62,29 @@ const HeroArchitecture = () => {
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
       {/* Background Gradient for Contrast */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(30,64,175,0.15)_0%,transparent_80%)]" />
-      
-      <svg 
-        ref={svgRef} 
-        viewBox="0 0 1000 1000" 
+
+      <svg
+        ref={svgRef}
+        viewBox="0 0 1000 1000"
         preserveAspectRatio="xMidYMid slice"
-        className="w-full h-full text-blue-800 dark:text-blue-500" 
-        fill="none" 
-        stroke="currentColor" 
+        className="w-full h-full text-blue-800 dark:text-blue-500"
+        fill="none"
+        stroke="currentColor"
         strokeWidth="1.2"
       >
         {/* The Radial Web */}
         {Array.from({ length: 24 }).map((_, i) => (
-          <path 
-            key={`v-${i}`} 
-            className="hero-path" 
-            d={`M${i * (1000/23)} 0 C 500 300, 500 700, ${1000 - i * (1000/23)} 1000`} 
+          <path
+            key={`v-${i}`}
+            className="hero-path"
+            d={`M${i * (1000 / 23)} 0 C 500 300, 500 700, ${1000 - i * (1000 / 23)} 1000`}
           />
         ))}
 
         {/* Intersection Nodes (The "Data Points") */}
-        {Array.from({ length: 6 }).map((_, row) => 
+        {Array.from({ length: 6 }).map((_, row) =>
           Array.from({ length: 6 }).map((_, col) => (
-            <circle 
+            <circle
               key={`node-${row}-${col}`}
               className="grid-node fill-blue-800 dark:fill-blue-400"
               cx={200 + col * 120}
@@ -95,7 +95,7 @@ const HeroArchitecture = () => {
           ))
         )}
       </svg>
-      
+
       {/* Bottom Fade */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#fcfcfc] dark:to-[#0a0a0a]" />
     </div>
@@ -127,18 +127,18 @@ export default function HeroSection() {
       <HeroArchitecture />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
-        
+
         {/* MAIN TEXT */}
         <div className="space-y-4 mb-12">
-          <motion.h1 
+          <motion.h1
             custom={1} variants={textVariants} initial="hidden" animate="visible"
             className="text-[10vw] md:text-8xl font-bold tracking-tight text-zinc-950 dark:text-white"
           >
             Precision <br />
             <span className="font-serif  text-blue-800 dark:text-blue-500">Architected.</span>
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             custom={2} variants={textVariants} initial="hidden" animate="visible"
             className="max-w-xl mx-auto text-lg text-zinc-500 dark:text-zinc-400 font-light"
           >
@@ -147,7 +147,7 @@ export default function HeroSection() {
         </div>
 
         {/* CTAs */}
-        <motion.div 
+        <motion.div
           custom={3} variants={textVariants} initial="hidden" animate="visible"
           className="flex flex-col sm:flex-row gap-6 justify-center"
         >
@@ -158,6 +158,15 @@ export default function HeroSection() {
             Contact
           </Link>
         </motion.div>
+        <div className="mx-auto max-w-4xl mt-8 flex flex-col">
+          <h3 className="text-3xl ">Partner with</h3>
+          <h2 className="hover:text-blue-600 text-4xl mt-4" >
+          <Link href="https://anaravtech.com" target="_blank">
+          Anarav Technologies
+          </Link>
+          </h2>
+        </div>
+
       </div>
 
     </section>
