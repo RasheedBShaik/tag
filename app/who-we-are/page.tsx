@@ -122,13 +122,6 @@ export default function AestheticApproach() {
         <HeroArchitecture />
         <div className="relative z-10 space-y-10 max-w-5xl">
           <div className="space-y-6">
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-block px-4 py-1.5 text-[10px] font-bold tracking-[0.3em] uppercase border border-blue-800/20 bg-white/60 dark:bg-black/50 backdrop-blur-md text-blue-800 dark:text-blue-400 rounded-full"
-            >
-              Digital Framework v2.0
-            </motion.span>
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -193,7 +186,7 @@ export default function AestheticApproach() {
                 >
                   <div className="relative h-[550px] w-full overflow-hidden rounded-[3rem] mb-8 bg-zinc-200 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800/50">
                     {v.imageUrl ? (
-                      <img src={v.imageUrl} alt={v.name} className="object-cover w-full h-full grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" />
+                      <img src={v.imageUrl} alt={v.name} className="object-cover w-full h-full md:grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 italic text-zinc-500">Image Pending</div>
                     )}
@@ -223,60 +216,65 @@ export default function AestheticApproach() {
       </section>
 
       {/* TECHNICAL TEAM SECTION (Carousel) */}
-      <section className="py-32 px-6 bg-zinc-950 text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto mb-12">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-            <div>
-              <h3 className="text-5xl tracking-tighter">Technical Team</h3>
-              <p className="text-zinc-500 text-sm font-mono mt-2 flex items-center gap-2">
-                <ChevronRight size={14} className="text-blue-500" /> DRAG TO EXPLORE
-              </p>
+<section className="py-32 px-6 bg-zinc-950 text-white overflow-hidden">
+  <div className="max-w-7xl mx-auto mb-12">
+    <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+      <div>
+        <h3 className="text-5xl tracking-tighter">Technical Team</h3>
+        <p className="text-zinc-500 text-sm font-mono mt-2 flex items-center gap-2">
+          <ChevronRight size={14} className="text-blue-500" /> DRAG TO EXPLORE
+        </p>
+      </div>
+      <p className="max-w-xs text-zinc-500 text-sm font-light">
+        Our multidisciplinary squad of engineers optimized for scale and high-load performance.
+      </p>
+    </div>
+  </div>
+
+  <div className="max-w-7xl mx-auto">
+    <motion.div ref={carouselRef} className="cursor-grab active:cursor-grabbing">
+      <motion.div
+        drag="x"
+        dragConstraints={constraints}
+        className="flex gap-6"
+      >
+        {techTeam.map((t, i) => (
+          <motion.div
+            key={t.name + i}
+            /* Fixed min-w and added max-w to ensure images don't over-expand */
+            className="w-[280px] md:w-[320px] max-w-[350px] group relative overflow-hidden rounded-2xl aspect-[3/4] bg-zinc-900 border border-zinc-800 flex-shrink-0"
+          >
+            {t.imageUrl ? (
+              <img 
+                src={t.imageUrl} 
+                className="object-cover w-full h-full md:grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" 
+                alt={t.name} 
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-zinc-700 font-mono text-[10px]">NO_IMAGE</div>
+            )}
+
+            {t.linkedinUrl && (
+              <a
+                href={t.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute top-4 right-4 z-20 p-3 bg-black/50 backdrop-blur-md border border-white/10 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-blue-600"
+              >
+                <ExternalLink size={16} />
+              </a>
+            )}
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0">
+              <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest mb-1">{t.role}</span>
+              <h5 className="font-bold text-xl">{t.name}</h5>
             </div>
-            <p className="max-w-xs text-zinc-500 text-sm font-light">
-              Our multidisciplinary squad of engineers optimized for scale and high-load performance.
-            </p>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto">
-          <motion.div ref={carouselRef} className="cursor-grab active:cursor-grabbing">
-            <motion.div
-              drag="x"
-              dragConstraints={constraints}
-              className="flex gap-6"
-            >
-              {techTeam.map((t, i) => (
-                <motion.div
-                  key={t.name + i}
-                  className="min-w-[300px] md:min-w-[350px] group relative overflow-hidden rounded-2xl aspect-[3/4] bg-zinc-900 border border-zinc-800 flex-shrink-0"
-                >
-                  {t.imageUrl ? (
-                    <img src={t.imageUrl} className="object-cover w-full h-full grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" alt={t.name} />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-700 font-mono text-[10px]">NO_IMAGE</div>
-                  )}
-
-                  {t.linkedinUrl && (
-                    <a
-                      href={t.linkedinUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="absolute top-4 right-4 z-20 p-3 bg-black/50 backdrop-blur-md border border-white/10 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-blue-600"
-                    >
-                      <ExternalLink size={16} />
-                    </a>
-                  )}
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0">
-                    <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest mb-1">{t.role}</span>
-                    <h5 className="font-bold text-xl">{t.name}</h5>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
           </motion.div>
-        </div>
-      </section>
+        ))}
+      </motion.div>
+    </motion.div>
+  </div>
+</section>
 
       {/* START JOURNEY SECTION */}
       <section className="relative py-32 px-6 overflow-hidden">
