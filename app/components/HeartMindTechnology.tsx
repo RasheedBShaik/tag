@@ -5,12 +5,12 @@ import { motion } from 'framer-motion';
 const cardContent = [
   {
     icon: <Heart className="w-8 h-8 text-rose-500" />,
-    name: "Empathy",
+    name: "Heart",
     description: "We build with empathy and fairness in design and delivery."
   },
   {
     icon: <Brain className="w-8 h-8 text-blue-500" />,
-    name: "Intelligence",
+    name: "Mind",
     description: "We execute with data-driven, agile, and adaptable strategies."
   },
   {
