@@ -26,6 +26,7 @@ const Navbar = () => {
     { name: "Design Studio", slug: "/services/design" },
     { name: "Culinary Arts", slug: "/services/arts" },
     { name: "Health & Wellness", slug: "/services/health" },
+    { name: "All Services", slug: "/services" },
   ];
 
   const leftLinks = [

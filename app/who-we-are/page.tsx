@@ -186,7 +186,7 @@ export default function AestheticApproach() {
                 >
                   <div className="relative h-[550px] w-full overflow-hidden rounded-[3rem] mb-8 bg-zinc-200 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800/50">
                     {v.imageUrl ? (
-                      <img src={v.imageUrl} alt={v.name} className="object-cover w-full h-full md:grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" />
+                      <img src={v.imageUrl} alt={v.name} className="object-cover w-full h-full transition-all duration-700 scale-105 group-hover:scale-100" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 italic text-zinc-500">Image Pending</div>
                     )}
@@ -247,7 +247,7 @@ export default function AestheticApproach() {
             {t.imageUrl ? (
               <img 
                 src={t.imageUrl} 
-                className="object-cover w-full h-full md:grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" 
+                className="object-cover w-full h-full group-hover:scale-110 transition-all duration-700" 
                 alt={t.name} 
               />
             ) : (
