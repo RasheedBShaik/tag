@@ -8,7 +8,7 @@ import FrameworkCarousel from './components/IntegratedFrameWork'
 import ImpactHero from './components/YourJourneyImpact'
 import HowWeWork from './components/HowWeWork'
 import PartnerTestimonials from './components/PartnerTestimonials'
-
+import FinalRoadmapCTA from './components/FinalRoadmapCTA'
 const page = () => {
   return (
     <div>
@@ -21,6 +21,7 @@ const page = () => {
       <ImpactHero/>
       <HowWeWork/>
       <PartnerTestimonials/>
+      <FinalRoadmapCTA/>
     </div>
   )
 }

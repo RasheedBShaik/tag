@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { gsap } from "gsap";
-import { ArrowRight, Terminal, Activity } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 /* ---------------------- 1. PARAMETRIC SVG ANIMATION ---------------------- */
 
@@ -97,7 +97,7 @@ const HeroArchitecture = () => {
       </svg>
 
       {/* Bottom Fade */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#fcfcfc] dark:to-[#0a0a0a]" />
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[#fcfcfc] dark:to-[#0a0a0a]" />
     </div>
   );
 };
@@ -123,26 +123,33 @@ export default function HeroSection() {
   if (!mounted) return null;
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-[#fcfcfc] dark:bg-[#0a0a0a] overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center bg-[#fcfcfc] dark:bg-[#0a0a0a] overflow-hidden py-24">
       <HeroArchitecture />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
 
         {/* MAIN TEXT */}
         <div className="space-y-4 mb-12">
+          <motion.div
+            custom={0} variants={textVariants} initial="hidden" animate="visible"
+            className="inline-block px-4 py-1.5 mb-4 rounded-full border border-blue-200 dark:border-blue-900/30 bg-blue-50/50 dark:bg-blue-950/20 text-blue-800 dark:text-blue-400 text-[10px] uppercase tracking-[0.2em] font-bold"
+          >
+            Advisory & Consulting Services
+          </motion.div>
+
           <motion.h1
             custom={1} variants={textVariants} initial="hidden" animate="visible"
-            className="text-[10vw] md:text-8xl font-bold tracking-tight text-zinc-950 dark:text-white"
+            className="text-[10vw] md:text-8xl font-bold tracking-tight text-zinc-950 dark:text-white leading-[0.9]"
           >
             Precision <br />
-            <span className="font-serif  text-blue-800 dark:text-blue-500">Architected.</span>
+            <span className="font-serif text-blue-800 dark:text-blue-500">Architected.</span>
           </motion.h1>
 
           <motion.p
             custom={2} variants={textVariants} initial="hidden" animate="visible"
-            className="max-w-xl mx-auto text-lg text-zinc-500 dark:text-zinc-400 font-light"
+            className="max-w-2xl mx-auto text-lg md:text-xl text-zinc-600 dark:text-zinc-400 font-light leading-relaxed"
           >
-            Synthesizing complex logic into high-performance digital infrastructure.
+            From high-level strategy to hands-on implementation, our eight service areas span the full transformation lifecycle—shaped by our <span className="text-zinc-950 dark:text-white font-medium">Heart · Mind · Technology</span> framework.
           </motion.p>
         </div>
 
@@ -151,24 +158,35 @@ export default function HeroSection() {
           custom={3} variants={textVariants} initial="hidden" animate="visible"
           className="flex flex-col sm:flex-row gap-6 justify-center"
         >
-          <Link href="/portfolio" className="group px-10 py-4 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-full font-bold text-[11px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 transition-transform">
-            View Portfolio <ArrowRight size={16} />
+          <Link href="/services" className="group px-10 py-4 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-full font-bold text-[11px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 transition-transform">
+            Explore Services <ArrowRight size={16} />
           </Link>
           <Link href="/contact" className="px-10 py-4 border border-zinc-200 dark:border-zinc-800 rounded-full font-bold text-[11px] uppercase tracking-widest text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all">
             Contact
           </Link>
         </motion.div>
-        <div className="mx-auto max-w-4xl mt-8 flex flex-col">
-          <h3 className="text-3xl ">Partner with</h3>
-          <h2 className="hover:text-blue-600 text-4xl mt-4" >
-          <Link href="https://anaravtech.com" target="_blank">
-          Anarav Technologies
-          </Link>
+
+        {/* PARTNER BRANDING */}
+        <motion.div 
+          custom={4} variants={textVariants} initial="hidden" animate="visible"
+          className="mx-auto max-w-4xl mt-24 flex flex-col items-center"
+        >
+          <h3 className="text-zinc-400 dark:text-zinc-500 text-[10px] uppercase tracking-[0.4em] font-black mb-4">
+            Partner with
+          </h3>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+            <Link 
+              href="https://anaravtech.com" 
+              target="_blank"
+              className="text-zinc-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-500 transition-colors duration-300"
+            >
+              Anarav Technologies
+            </Link>
           </h2>
-        </div>
+          <div className="w-12 h-px bg-blue-600 mt-6" />
+        </motion.div>
 
       </div>
-
     </section>
   );
 }

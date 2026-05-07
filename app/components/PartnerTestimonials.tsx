@@ -153,7 +153,7 @@ const PartnerTestimonials = () => {
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="text-2xl md:text-3xl lg:text-4xl font-semibold text-zinc-800 dark:text-zinc-100 leading-[1.15] mb-8 tracking-tight"
+                    className="text-xl md:text-3xl  font-semibold text-zinc-800 dark:text-zinc-100 leading-[1.15] mb-8 tracking-tight"
                   >
                     "{t.quote}"
                   </motion.p>

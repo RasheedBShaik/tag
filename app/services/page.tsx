@@ -23,7 +23,7 @@ const SERVICES_DATA = {
   },
   "cloud-infrastructure": {
     category: "Technology-led",
-    title: "Cloud, Infrastructure & Enterprise Architecture",
+    title: "Cloud Infrastructure & Enterprise Architecture",
     tagline: "Scalable, secure, cost-efficient infrastructure is the foundation everything else depends on. We design and migrate cloud architectures that reduce operational overhead, increase resilience, and are built to remain vendor-neutral by design.",
     outcomes: ["Multi-cloud", "Cloud migration", "Enterprise architecture", "DevSecOps", "Cost Optimization", "Vendor selection"],
   },
@@ -79,7 +79,7 @@ export default function ServicesPage() {
       </div>
 
       {/* HERO / HEADER */}
-      <section className="relative z-10 pt-40 pb-24 px-6">
+      <section className="relative z-10 py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-8 mb-16">
             <motion.div
@@ -108,18 +108,12 @@ export default function ServicesPage() {
           </div>
 
           <div className="relative">
-            <motion.div
-              style={{ y: y1 }}
-              className="absolute -top-20 -left-10 text-[12rem] font-black text-zinc-100 dark:text-zinc-900/30 select-none z-0 hidden lg:block uppercase"
-            >
-              Advisory
-            </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="relative z-10 text-[clamp(3rem,10vw,7.5rem)] font-black uppercase tracking-tighter leading-[0.85] mb-12"
+              className="relative z-10 text-4xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.85] mb-12"
             >
               Transformation <br />
               <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
@@ -131,7 +125,7 @@ export default function ServicesPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="max-w-2xl text-lg text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed border-l-2 border-blue-600 pl-6"
+              className="max-w-2xl text-sm md:text-lg text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed border-l-2 border-blue-600 pl-6"
             >
               From high-level strategy to hands-on implementation, our eight service areas span the full transformation lifecycle. Every engagement is shaped by the Heart · Mind · Technology framework — ensuring the human, strategic, and technical dimensions are addressed together, never in silos.
               <br />
@@ -180,11 +174,11 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  <h3 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
+                  <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
                     {service.title}
                   </h3>
 
-                  <p className="text-zinc-500 dark:text-zinc-400 font-normal text-lg max-w-sm leading-snug">
+                  <p className="text-zinc-500 dark:text-zinc-400 font-normal text-sm md:text-lg max-w-sm leading-snug">
                     {service.tagline}
                   </p>
                 </div>
