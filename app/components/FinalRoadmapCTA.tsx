@@ -93,7 +93,7 @@ const FinalRoadmapCTA = () => {
             >
               <Sparkles className="w-3.5 h-3.5 text-blue-700 dark:text-blue-400" />
               <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-600 dark:text-blue-400">
-                Performance Optimized
+                Ready to Begin
               </span>
             </motion.div>
 
