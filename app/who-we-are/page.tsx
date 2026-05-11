@@ -310,20 +310,6 @@ export default function TheTAGExperience() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="py-16 px-6 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a]">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex flex-col items-center md:items-start">
-            <span className="text-2xl font-black tracking-tighter uppercase">The TAG V.P.</span>
-            <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-2">© 2026 Strategic Advisory Group</p>
-          </div>
-          <div className="flex gap-8">
-            {['Strategy', 'Architecture', 'AnaravTech'].map(l => (
-                <span key={l} className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-blue-600 cursor-pointer transition-colors">{l}</span>
-            ))}
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

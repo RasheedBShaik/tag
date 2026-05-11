@@ -288,9 +288,6 @@ export default function AestheticApproach() {
         </div>
       </section>
 
-      <footer className="py-12 px-6 border-t border-zinc-100 dark:border-zinc-900 text-center">
-          <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">© 2026 TheTAG Ventures & Partners · partners@th3tag.com</p>
-      </footer>
     </div>
   );
 }
