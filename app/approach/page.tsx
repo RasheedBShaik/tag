@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ArrowRight, Share2, Terminal, Zap, Shield, Fingerprint, ChevronRight, 
-  Cpu, Rocket, Paintbrush, Coffee, Heart
+  Cpu, Rocket, Paintbrush, Coffee, Heart, Plus, Minus, Mail, Calendar, Search
 } from "lucide-react";
 
 if (typeof window !== "undefined") {
@@ -117,6 +117,15 @@ export default function AestheticApproach() {
     { icon: <Heart size={24} />, t: "Health & Wellness", d: "Integrating data-driven insights into human-centric care." }
   ];
 
+  const faqData = [
+    { q: "What does the first conversation look like?", a: "We spend 30 minutes listening to the actual problem. We don't bring a pitch deck. We give you an honest read on fit, model, and timeline right then and there." },
+    { q: "How are engagements priced?", a: "We use fixed-fee, milestone-based pricing. You know exactly what you are paying and what the deliverable is before we start. No open-ended hourly billing." },
+    { q: "What if the plan needs to change mid-engagement?", a: "We maintain a shared decision log. If scope or direction needs to shift, we document the trade-offs in writing and both sides sign off before we proceed." },
+    { q: "Can we stop partway through?", a: "Yes. Our milestone structure includes go/no-go checkpoints. If the project's structural reality changes, you can stop at any milestone with no further obligation." },
+    { q: "Does this approach apply to all five practice areas?", a: "Absolutely. Whether it's Technology Advisory or Culinary Arts, the Heart-Mind-Technology sequence and the 4-phase delivery model remain constant." },
+    { q: "What happens after the engagement closes?", a: "We provide 90 days of availability for questions at no extra cost. We ensure your team is fully independent, but we stay close enough to ensure a smooth transition." }
+  ];
+
   const infiniteCards = [...baseCards, ...baseCards];
   const infiniteSpecialty = [...specialtyCards, ...specialtyCards];
 
@@ -129,53 +138,60 @@ export default function AestheticApproach() {
         <HeroArchitecture />
         <div className="relative z-10 space-y-10 max-w-5xl">
           <div className="space-y-6">
-            <h1 className="text-[10vw] md:text-8xl font-medium tracking-tight leading-[0.85]">Precision <br /> <span className="font-serif italic font-light">Architected.</span></h1>
-            <p className="max-w-xl mx-auto text-lg md:text-xl text-zinc-500 dark:text-zinc-400 leading-relaxed font-light">Converting complex vision into robust, scalable technological assets through multidisciplinary rigor.</p>
+            <h1 className="text-[10vw] md:text-8xl font-medium tracking-tight leading-[0.85]">
+                Clarity, Collaboration, <br /> 
+                <span className="font-serif italic font-light text-blue-600">and Measurable Results.</span>
+            </h1>
+            <p className="max-w-xl mx-auto text-lg md:text-xl text-zinc-500 dark:text-zinc-400 leading-relaxed font-light">
+                Our approach is built on diversity of thought and collective creativity. We believe the most powerful solutions emerge from the synergy of empathy, strategic intelligence, and purposeful technology.
+            </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="group relative px-8 py-4 bg-blue-600 text-white rounded-full overflow-hidden transition-all hover:pr-12 active:scale-95">
-              <span className="relative z-10 flex items-center gap-2 font-medium">Insights <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" /></span>
+            <button className="group relative px-8 py-4 bg-blue-600 text-white rounded-full overflow-hidden transition-all active:scale-95">
+              <span className="relative z-10 flex items-center gap-2 font-medium">Start a Conversation <ArrowRight size={18} /></span>
               <div className="absolute inset-0 bg-blue-500 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
-            <button className="px-8 py-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors flex items-center gap-2 font-medium">Portfolio <ChevronRight size={18} className="text-blue-500" /></button>
+            <button className="px-8 py-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors flex items-center gap-2 font-medium group">
+                See Our Process <ChevronRight size={18} className="text-blue-500 group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
         </div>
       </section>
 
       {/* FOUNDATION SECTION */}
-      <section className="mx-auto max-w-4xl px-6 py-20">
-        <h3 className="text-3xl my-4 font-medium">Our Foundation: Empowering Innovation Through Diverse Perspectives.</h3>
-        <p className="text-md text-zinc-500 leading-relaxed">Our approach is built on diversity of thought and collective creativity. We believe the most powerful solutions emerge from the synergy of human empathy, strategic intelligence, and purposeful technology.</p>
+      <section className="mx-auto max-w-7xl px-6 py-32 border-y border-zinc-100 dark:border-zinc-900">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div className="space-y-6">
+                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-blue-600">Our Foundation</h3>
+                <p className="text-3xl md:text-4xl font-light text-zinc-800 dark:text-zinc-200 leading-tight">
+                    Every partnership follows a transparent, structured journey — from understanding your actual goals to leaving your team <span className="font-serif italic">fully empowered</span> to sustain the work.
+                </p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+                <MetricCard val="4" label="Phases applied to every engagement — Listen, Plan, Build, Hand Off" />
+                <MetricCard val="1pg" label="Written plan delivered by week 4 — scope, milestones, success criteria" />
+                <MetricCard val="2wk" label="Shipping cadence during the Build phase — working demo every fortnight" />
+                <MetricCard val="100%" label="Knowledge transferred at close — your team owns all artifacts" />
+            </div>
+        </div>
       </section>
 
-      {/* VISION & MISSION */}
-      <section className="relative z-10 py-10 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-32 items-center">
-          <div className="space-y-8">
-            <div className="flex gap-4 items-center">
-              <div className="w-16 h-16 flex items-center justify-center bg-blue-600/10 rounded-2xl text-blue-600"><Zap /></div>
-              <h2 className="text-5xl font-medium tracking-tight">Vision</h2>
+      {/* VISION & MISSION SECTION */}
+      <section className="py-32 px-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-32">
+          <div className="space-y-8 sticky top-32 h-fit">
+            <h2 className="text-6xl font-black tracking-tighter uppercase">Vision <br/>& Mission</h2>
+            <p className="text-xl text-zinc-500 font-light max-w-md">What we're building toward — and why. These statements govern every decision we make on your behalf.</p>
+          </div>
+          <div className="space-y-32">
+            <div className="space-y-8">
+                <div className="flex items-center gap-4 text-blue-600"><Zap size={40}/> <h4 className="text-3xl font-bold">Vision</h4></div>
+                <p className="text-2xl font-serif italic font-light text-zinc-700 dark:text-zinc-300 leading-relaxed">"To lead the ethical revolution by uniting Heart, Mind, and Technology — empowering organizations to innovate responsibly, grow inclusively, and operate with genuine independence."</p>
             </div>
-            <p className="text-zinc-400 leading-relaxed italic text-lg font-light">We seek a world where technology feels like an extension of our best selves—where the brilliance of the human mind and the warmth of the human heart are amplified by the tools we create, leaving no one behind in the shadow of the machine.</p>
-          </div>
-          <div className="relative aspect-square">
-            <BlueprintSVG className="w-full h-full">
-              <circle cx="200" cy="200" r="150" strokeDasharray="10 5" />
-              <rect x="120" y="120" width="160" height="160" rx="20" strokeWidth="2" className="text-blue-600" />
-            </BlueprintSVG>
-          </div>
-          <div className="relative aspect-square md:order-last">
-            <BlueprintSVG className="w-full h-full">
-              <path d="M50 300 L200 50 L350 300 Z" strokeWidth="2" className="text-blue-600" strokeLinejoin="round" />
-              <circle cx="200" cy="215" r="78" strokeWidth="1.5" className="text-blue-500" strokeDasharray="4 4" />
-            </BlueprintSVG>
-          </div>
-          <div className="space-y-8">
-            <div className="flex gap-4 items-center">
-              <div className="w-16 h-16 flex items-center justify-center bg-zinc-100 dark:bg-white/5 rounded-2xl text-blue-600"><Shield /></div>
-              <h2 className="text-5xl font-medium tracking-tight">Mission</h2>
+            <div className="space-y-8">
+                <div className="flex items-center gap-4 text-blue-600"><Shield size={40}/> <h4 className="text-3xl font-bold">Mission</h4></div>
+                <p className="text-2xl font-serif italic font-light text-zinc-700 dark:text-zinc-300 leading-relaxed">"We unite compassionate insight, agile strategic execution, and ethical innovation to turn ambition into validated, impactful outcomes through transparency and full knowledge transfer."</p>
             </div>
-            <p className="text-zinc-400 leading-relaxed italic text-lg font-light">Transparency is the soul of the ethical revolution. It transforms the 'black box' of technology into a glass house, where the heart’s intent and the mind’s logic are visible to all.</p>
           </div>
         </div>
       </section>
@@ -193,27 +209,21 @@ export default function AestheticApproach() {
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="max-w-4xl mb-20">
-            <h3 className="text-4xl font-medium mb-6">Our Process Delivers Clarity, Collaboration, and Results.</h3>
-            <p className="text-zinc-400 text-lg">Every partnership follows a transparent, structured journey.</p>
+            <h3 className="text-4xl font-medium mb-6 uppercase tracking-tighter">Our Process Delivers Clarity</h3>
+            <p className="text-zinc-400 text-lg font-light">Every partnership follows a transparent, structured journey.</p>
           </div>
 
-          <div 
-            className="relative flex overflow-hidden"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
+          <div className="relative flex overflow-hidden" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
             <motion.div 
               className="flex gap-6 pr-6"
               animate={{ x: isHovered ? undefined : ["0%", "-50%"] }}
-              transition={{
-                x: { repeat: Infinity, repeatType: "loop", duration: 20, ease: "linear" },
-              }}
+              transition={{ x: { repeat: Infinity, repeatType: "loop", duration: 20, ease: "linear" } }}
             >
               {infiniteCards.map((card, i) => (
                 <div key={i} className="w-[320px] md:w-[400px] flex-shrink-0 group p-10 border border-white/10 rounded-[2.5rem] bg-zinc-900/50 backdrop-blur-xl transition-all duration-500 hover:border-blue-500/50 hover:bg-zinc-900/80">
-                  <div className="text-blue-500 mb-8 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3">{card.icon}</div>
-                  <h4 className="text-2xl font-bold mb-4 transition-colors group-hover:text-blue-400">{card.t}</h4>
-                  <p className="text-zinc-500 text-sm leading-relaxed transition-colors group-hover:text-zinc-300">{card.d}</p>
+                  <div className="text-blue-500 mb-8 transition-transform duration-500 group-hover:scale-110">{card.icon}</div>
+                  <h4 className="text-2xl font-bold mb-4">{card.t}</h4>
+                  <p className="text-zinc-500 text-sm leading-relaxed">{card.d}</p>
                 </div>
               ))}
             </motion.div>
@@ -225,46 +235,106 @@ export default function AestheticApproach() {
       <section className="relative z-10 py-24 bg-[#050505] text-white overflow-hidden border-t border-white/5">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="max-w-4xl mb-20 text-right ml-auto">
-            <h3 className="text-4xl font-medium mb-6">Multidisciplinary Verticals</h3>
-            <p className="text-zinc-400 text-lg">Our expertise extends across diverse industries, from strategic consulting to culinary arts.</p>
+            <h3 className="text-4xl font-medium mb-6 uppercase tracking-tighter">Multidisciplinary Verticals</h3>
+            <p className="text-zinc-400 text-lg font-light">Our expertise extends across diverse industries and practice areas.</p>
           </div>
 
-          <div 
-            className="relative flex overflow-hidden"
-            onMouseEnter={() => setIsSecondHovered(true)}
-            onMouseLeave={() => setIsSecondHovered(false)}
-          >
+          <div className="relative flex overflow-hidden" onMouseEnter={() => setIsSecondHovered(true)} onMouseLeave={() => setIsSecondHovered(false)}>
             <motion.div 
               className="flex gap-6 pr-6"
-              animate={{ x: isSecondHovered ? undefined : ["-50%", "0%"] }} // Reversed direction for visual balance
-              transition={{
-                x: { repeat: Infinity, repeatType: "loop", duration: 25, ease: "linear" }, // Slightly slower for readability
-              }}
+              animate={{ x: isSecondHovered ? undefined : ["-50%", "0%"] }}
+              transition={{ x: { repeat: Infinity, repeatType: "loop", duration: 25, ease: "linear" } }}
             >
               {infiniteSpecialty.map((card, i) => (
-                <div key={i} className="w-[320px] md:w-[400px] flex-shrink-0 group p-10 border border-white/5 rounded-[2.5rem] bg-zinc-900/30 backdrop-blur-xl transition-all duration-500 hover:border-zinc-500/50 hover:bg-zinc-900/60">
-                  <div className="text-zinc-400 mb-8 transition-all duration-500 group-hover:text-white group-hover:scale-110">
-                    {card.icon}
-                  </div>
-                  <h4 className="text-2xl font-bold mb-4 transition-colors group-hover:text-blue-400">{card.t}</h4>
-                  <p className="text-zinc-500 text-sm leading-relaxed transition-colors group-hover:text-zinc-300">{card.d}</p>
-                  
+                <div key={i} className="w-[320px] md:w-[400px] flex-shrink-0 group p-10 border border-white/5 rounded-[2.5rem] bg-zinc-900/30 backdrop-blur-xl transition-all duration-500 hover:border-zinc-500/50">
+                  <div className="text-zinc-400 mb-8 group-hover:text-white transition-all">{card.icon}</div>
+                  <h4 className="text-2xl font-bold mb-4">{card.t}</h4>
+                  <p className="text-zinc-500 text-sm leading-relaxed">{card.d}</p>
                 </div>
               ))}
             </motion.div>
           </div>
+        </div>
+      </section>
 
-          {/* Combined Status Indicator for both carousels */}
-          <div className="mt-16 flex items-center justify-between border-t border-white/10 pt-8">
-            <div className="flex items-center gap-3">
-              <div className={`w-2 h-2 rounded-full ${(isHovered || isSecondHovered) ? 'bg-amber-500 shadow-[0_0_8px_#f59e0b]' : 'bg-blue-600 animate-pulse shadow-[0_0_8px_#2563eb]'}`} />
-              <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-                {(isHovered || isSecondHovered) ? "System Inspection Active" : "Universal Scroll Engine: Online"}
-              </span>
-            </div>
+      {/* PROCESS QUESTIONS (FAQ) */}
+      <section className="py-32 px-6 bg-zinc-50 dark:bg-zinc-900/30">
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-20">
+            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">Process Questions</h2>
+            <p className="text-zinc-500 text-lg">How it works in practice. The most common questions about how TheTAG engagements actually run.</p>
+          </div>
+          <div className="space-y-4">
+            {faqData.map((faq, i) => (
+              <FAQItem key={i} question={faq.q} answer={faq.a} />
+            ))}
           </div>
         </div>
       </section>
+
+      {/* LET'S BUILD TOGETHER (CTA) */}
+      <section className="py-40 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-24 space-y-6">
+            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter">Let's Build <br/>Together.</h2>
+            <p className="text-xl text-zinc-500 max-w-2xl mx-auto font-light">Every partnership starts with an honest conversation. Tell us what you're trying to build.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <CTACard icon={<Calendar className="text-blue-600" />} title="Start Here" subtitle="Book a Discovery Call" desc="30 minutes — we listen to the actual problem and give you an honest read. No pitch decks." action="Book a call" />
+            <CTACard icon={<Search className="text-blue-600" />} title="Fast Track" subtitle="Request a Rapid Diagnostic" desc="Already know the domain? A 2–4 week scoped diagnostic produces a prioritized action plan." action="Request diagnostic" />
+            <CTACard icon={<Mail className="text-blue-600" />} title="Direct" subtitle="Email the Principals" desc="partners@th3tag.com — read by a founding principal, responded to within 48 hours." action="Send an email" highlight />
+          </div>
+        </div>
+      </section>
+
+      <footer className="py-12 px-6 border-t border-zinc-100 dark:border-zinc-900 text-center">
+          <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">© 2026 TheTAG Ventures & Partners · partners@th3tag.com</p>
+      </footer>
     </div>
   );
 }
+
+/* ---------------------- REUSABLE UI COMPONENTS ---------------------- */
+
+const MetricCard = ({ val, label }: { val: string; label: string }) => (
+    <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-blue-500 transition-colors group">
+        <div className="text-4xl font-black text-blue-600 mb-2">{val}</div>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 leading-tight">{label}</p>
+    </div>
+);
+
+const FAQItem = ({ question, answer }: { question: string; answer: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="border-b border-zinc-200 dark:border-zinc-800 last:border-0">
+      <button onClick={() => setIsOpen(!isOpen)} className="w-full py-8 flex justify-between items-center text-left group">
+        <span className="text-xl font-bold tracking-tight group-hover:text-blue-600 transition-colors">{question}</span>
+        <div className="flex-shrink-0 ml-4">{isOpen ? <Minus size={20} /> : <Plus size={20} />}</div>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+            <p className="pb-8 text-zinc-500 text-lg leading-relaxed font-light">{answer}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const CTACard = ({ icon, title, subtitle, desc, action, highlight }: any) => (
+  <div className={`p-10 rounded-[3rem] border transition-all duration-500 flex flex-col h-full ${highlight ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 hover:border-blue-500'}`}>
+    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-8 ${highlight ? 'bg-white/20' : 'bg-blue-50 dark:bg-blue-900/20'}`}>
+      {React.cloneElement(icon, { size: 24, className: highlight ? "text-white" : "text-blue-600" })}
+    </div>
+    <div className="flex-grow">
+      <span className={`text-[10px] font-black uppercase tracking-widest ${highlight ? 'text-blue-100' : 'text-blue-600'}`}>{title}</span>
+      <h4 className="text-2xl font-bold mt-2 mb-4 leading-tight">{subtitle}</h4>
+      <p className={`text-sm font-light leading-relaxed mb-8 ${highlight ? 'text-blue-50' : 'text-zinc-500'}`}>{desc}</p>
+    </div>
+    <button className={`flex items-center gap-2 text-xs font-black uppercase tracking-widest group ${highlight ? 'text-white' : 'text-blue-600'}`}>
+      {action} <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+    </button>
+  </div>
+);
