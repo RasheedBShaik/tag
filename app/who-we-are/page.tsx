@@ -132,7 +132,7 @@ export default function TheTAGExperience() {
           
           <div className="space-y-6">
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-[12vw] md:text-8xl font-black tracking-tight leading-[0.85] uppercase">
-              Heart, Mind <br /> <span className="font-serif italic font-light lowercase tracking-normal text-blue-800">&</span> Technology.
+              Heart, Mind <br /> <span className="font-serif italic font-light lowercase tracking-normal text-blue-800">&</span> Technology
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="max-w-2xl mx-auto text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-light">
               We believe true transformation begins with people, not platforms. TheTAG Ventures & Partners is a founder-led collective helping bold leaders turn ideas into measurable, lasting impact.
@@ -218,36 +218,12 @@ export default function TheTAGExperience() {
         </div>
       </section>
 
-      {/* ANARAV PARTNER SECTION */}
-      <section className="py-32 px-6 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto relative z-10">
-            <div className="bg-white dark:bg-zinc-950 rounded-[4rem] p-8 md:p-20 border border-zinc-200 dark:border-zinc-800 flex flex-col lg:flex-row gap-16 items-center shadow-xl shadow-blue-900/5">
-                <div className="lg:w-1/2 space-y-8">
-                    <div className="flex items-center gap-3 text-blue-600 font-black tracking-widest uppercase text-[10px]">
-                        <Code2 size={16} /> Official Technical Partner
-                    </div>
-                    <h2 className="text-5xl md:text-6xl font-black tracking-tight leading-none uppercase">Powered by <br/>Anarav Tech.</h2>
-                    <p className="text-lg text-zinc-500 leading-relaxed font-light">
-                        While TheTAG provides high-performance strategy, **Anarav Technologies** acts as our dedicated engineering engine. This synergy ensures grand visions are built with industrial-grade precision.
-                    </p>
-                    <a href="https://anaravtech.com" target="_blank" className="group flex items-center gap-3 text-blue-800 dark:text-blue-400 font-bold uppercase tracking-widest text-xs">
-                        View Engineering Suite <ExternalLink size={16} className="group-hover:translate-x-1 transition-transform" />
-                    </a>
-                </div>
-                <div className="lg:w-1/2 w-full aspect-square bg-zinc-50 dark:bg-zinc-900 rounded-[3rem] flex items-center justify-center border border-zinc-200 dark:border-zinc-800 relative">
-                    <Cpu size={80} className="text-blue-800/20 dark:text-blue-400/20 animate-pulse" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent"></div>
-                </div>
-            </div>
-        </div>
-      </section>
-
       {/* PARTNERS SECTION */}
       <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-20">
             <div className="max-w-2xl">
-              <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none">The <br/><span className="text-blue-800">Partners.</span></h2>
+              <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none">The <br/><span className="text-blue-800">Architects</span></h2>
               <p className="mt-6 text-xl text-zinc-500 font-light italic font-serif">Principal-led engagements. No exceptions.</p>
             </div>
             {loading && <Loader2 className="animate-spin text-zinc-500" />}

@@ -121,10 +121,10 @@ export default function HeroSection() {
         {/* MAIN HEADING - 10vw size */}
         <motion.h1
           custom={1} variants={textVariants} initial="hidden" animate="visible"
-          className="text-[10vw] md:text-8xl font-bold tracking-tight text-zinc-950 dark:text-white leading-[0.9] mb-8"
+          className="text-[10vw] uppercase md:text-8xl font-bold tracking-tight text-zinc-950 dark:text-white leading-[0.9] mb-8"
         >
-          Bold ideas. <br />
-          <span className="font-serif text-blue-800 dark:text-blue-500">Real impact.</span>
+          Bold ideas<br />
+          <span className="font-serif text-blue-800 dark:text-blue-500">Real impact</span>
         </motion.h1>
 
         {/* ANALYTICS STRIP */}
