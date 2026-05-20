@@ -302,6 +302,7 @@ export default function TheTAGExperience() {
           </motion.div>
           
           <div className="space-y-6">
+<<<<<<< HEAD
             <motion.h1 
               initial={{ opacity: 0, y: 30 }} 
               animate={{ opacity: 1, y: 0 }} 
@@ -310,6 +311,10 @@ export default function TheTAGExperience() {
             >
               Heart Mind <br /> 
               <span className="text-blue-800 dark:text-blue-500 font-serif">technology</span>
+=======
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-[12vw] md:text-8xl font-black tracking-tight leading-[0.85] uppercase">
+              Heart, Mind <br /> <span className="font-serif italic font-light lowercase tracking-normal text-blue-800">&</span> Technology
+>>>>>>> ea8f1f09c9f1ac471e309fcfe10ce17f76579369
             </motion.h1>
             
             <motion.p 
@@ -406,7 +411,7 @@ export default function TheTAGExperience() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-20">
             <div className="max-w-2xl">
-              <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none">The <br/><span className="text-blue-800">Partners.</span></h2>
+              <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none">The <br/><span className="text-blue-800">Architects</span></h2>
               <p className="mt-6 text-xl text-zinc-500 font-light italic font-serif">Principal-led engagements. No exceptions.</p>
             </div>
             {loading && <Loader2 className="animate-spin text-zinc-500" />}

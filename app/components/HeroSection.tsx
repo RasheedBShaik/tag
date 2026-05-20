@@ -207,8 +207,13 @@ export default function HeroSection() {
           custom={1} variants={textVariants} initial="hidden" animate="visible"
           className="text-[10vw] uppercase md:text-8xl font-bold tracking-tight text-zinc-950 dark:text-white leading-[0.9] mb-8"
         >
+<<<<<<< HEAD
           Bold ideas <br />
           <span className="font-serif text-blue-800 dark:text-blue-500 tracking-normal">Real impact</span>
+=======
+          Bold ideas<br />
+          <span className="font-serif text-blue-800 dark:text-blue-500">Real impact</span>
+>>>>>>> ea8f1f09c9f1ac471e309fcfe10ce17f76579369
         </motion.h1>
 
         {/* ANALYTICS STRIP */}
