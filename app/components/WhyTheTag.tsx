@@ -18,7 +18,7 @@ export interface DifferentiatorItem {
 }
 
 interface WhyTheTAGProps {
-  items: DifferentiatorItem[];
+  items?: DifferentiatorItem[]; // Made optional with '?' to allow empty component initialization
 }
 
 // Map strings directly to the Component constructor types

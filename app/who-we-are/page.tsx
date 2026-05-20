@@ -302,19 +302,10 @@ export default function TheTAGExperience() {
           </motion.div>
           
           <div className="space-y-6">
-<<<<<<< HEAD
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[12vw] md:text-8xl font-black tracking-tight leading-[0.85] uppercase text-zinc-900 dark:text-white"
-            >
-              Heart Mind <br /> 
-              <span className="text-blue-800 dark:text-blue-500 font-serif">technology</span>
-=======
+
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-[12vw] md:text-8xl font-black tracking-tight leading-[0.85] uppercase">
               Heart, Mind <br /> <span className="font-serif italic font-light lowercase tracking-normal text-blue-800">&</span> Technology
->>>>>>> ea8f1f09c9f1ac471e309fcfe10ce17f76579369
+
             </motion.h1>
             
             <motion.p 
