@@ -1,7 +1,5 @@
-import { defineField, defineType } from "sanity";
-import { HelpCircle } from "lucide-react";
+"use client";
 
-<<<<<<< HEAD
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
@@ -230,13 +228,11 @@ export default function AestheticApproach({ faqData: initialFaqData = [] }: Aest
   const [faqs, setFaqs] = useState<CMSFaqItem[]>(initialFaqData);
   const [loading, setLoading] = useState(initialFaqData.length === 0);
 
-  // Client-side execution logic fetching your Studio data entries smoothly
   useEffect(() => {
     if (initialFaqData.length > 0) return;
 
     async function fetchFaqData() {
       try {
-        // Dynamically import client to keep bundle optimization cleaner
         const { client } = await import("@/sanity/lib/client");
         const query = `*[_type == "processFaq"] | order(order asc)`;
         const result = await client.fetch(query);
@@ -353,11 +349,11 @@ export default function AestheticApproach({ faqData: initialFaqData = [] }: Aest
         <div className="absolute inset-0 opacity-10 pointer-events-none z-0">
           <svg width="100%" height="100%">
             <defs>
-              <pattern id="node-grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+              <pattern id="node-grid-pattern-new" width="40" height="40" patternUnits="userSpaceOnUse">
                 <circle cx="2" cy="2" r="1" fill="#2563eb" />
               </pattern>
             </defs>
-            <rect width="100%" height="100%" fill="url(#node-grid-pattern)" />
+            <rect width="100%" height="100%" fill="url(#node-grid-pattern-new)" />
           </svg>
         </div>
 
@@ -467,58 +463,3 @@ const CTACard = ({ icon, title, subtitle, desc, action, highlight }: any) => (
     </button>
   </div>
 );
-=======
-export const processFaq = defineType({
-  name: "processFaq",
-  title: "Process & FAQ Data Items",
-  type: "document",
-  icon: HelpCircle,
-  fields: [
-    defineField({
-      name: "title",
-      title: "Item Title / Question",
-      type: "string",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "description",
-      title: "Description / Answer Text",
-      type: "text",
-      rows: 4,
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "contentType",
-      title: "Content Segment Location",
-      type: "string",
-      options: {
-        list: [
-          { title: "Carousel Process Card", value: "process" },
-          { title: "FAQ Accordion Item", value: "faq" }
-        ],
-        layout: "radio"
-      },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "iconName",
-      title: "Card Icon Asset",
-      description: "Only used if Content Segment Location is set to 'Carousel Process Card'",
-      type: "string",
-      options: {
-        list: [
-          { title: "Terminal", value: "terminal" },
-          { title: "Share/Mesh", value: "share" },
-          { title: "Fingerprint", value: "fingerprint" },
-          { title: "Shield", value: "shield" }
-        ]
-      }
-    }),
-    defineField({
-      name: "order",
-      title: "Rendering Sort Weight Order",
-      type: "number"
-    }),
-  ]
-});
->>>>>>> ea8f1f09c9f1ac471e309fcfe10ce17f76579369
