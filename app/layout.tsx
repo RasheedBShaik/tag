@@ -1,63 +1,19 @@
-"use client"; 
-
-import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "next-themes"; 
-import Navbar from "./components/Navbar"; 
-import Footer from "./components/Footer";
-import { usePathname } from "next/navigation";
+// 1. Import your custom client provider instead of 'next-themes'
+import { Providers } from "./components/Providers"; // Adjust path if it's in a different folder
+import ClientWrapper from "./components/ClientWrapper";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-  weight: ["300", "500", "700"],
-});
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-});
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const pathname = usePathname();
-  
-  // Check if the current route starts with /studio
-  const isAdmin = pathname.startsWith("/admin");
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      // This stays here to handle the <html> attributes (like class="dark")
-      suppressHydrationWarning 
-      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
-    >
-      <body 
-        // ADD THIS: suppresses the script-injection warning from next-themes
-        suppressHydrationWarning={true}
-        className={`${inter.variable} min-h-full flex flex-col bg-(--background) text-(--foreground) transition-colors duration-500 font-sans`}
-      >
-        <ThemeProvider 
-          attribute="class" 
-          defaultTheme="dark" 
-          enableSystem={false}
-        >
-          {/* Only show Navbar if NOT in Sanity Studio */}
-          {!isAdmin && <Navbar />}
-          
-          <main className="grow">{children}</main>
-          
-          {/* Only show Footer if NOT in Sanity Studio */}
-          {!isAdmin && <Footer/>}
-        </ThemeProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} min-h-full flex flex-col bg-background text-foreground font-sans`}>
+        {/* 2. Swap ThemeProvider out for your Client-Safe Providers wrapper */}
+        <Providers>
+          <ClientWrapper>{children}</ClientWrapper>
+        </Providers>
       </body>
     </html>
   );
