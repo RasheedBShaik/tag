@@ -19,6 +19,7 @@ export interface ValueItem {
 interface CoreValuesProps {
   data: {
     heading?: string;
+    lineColor?: string;
     technologies?: ValueItem[];
   } | null;
 }
@@ -74,6 +75,7 @@ export const defaultValues = [
 const CoreValues: React.FC<CoreValuesProps> = ({ data }) => {
   const rawHeading = data?.heading || "Our Core Values";
   const heading = cleanText(rawHeading);
+  const activeLineColor = data?.lineColor || "bg-blue-600";
   const items = data?.technologies || [];
   
   const rawDisplayItems = items && items.length > 0 ? items : defaultValues;
@@ -162,7 +164,7 @@ const CoreValues: React.FC<CoreValuesProps> = ({ data }) => {
             viewport={{ once: true }}
             transition={{ duration: 1, ease: "easeInOut", delay: 0.3 }}
             style={{ originX: 0 }}
-            className="w-48 h-1 bg-blue-600 mt-4"
+            className={`w-48 h-1 mt-4 ${activeLineColor}`}
             aria-hidden="true"
           />
         </div>

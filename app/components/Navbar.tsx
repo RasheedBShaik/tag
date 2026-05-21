@@ -6,6 +6,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
+import { client } from "@/sanity/lib/client";
+
+interface SanityServiceNode {
+  title: string;
+  slug: {
+    current: string;
+  };
+}
+
+interface DynamicServiceRoute {
+  name: string;
+  slug: string;
+}
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -15,19 +28,45 @@ const Navbar = () => {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+  const [dynamicServices, setDynamicServices] = useState<DynamicServiceRoute[]>([]);
 
+  // 1. Synchronize Client Mounting
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const services = [
-    { name: "Technology Advisory", slug: "/services/advisory" },
-    { name: "Strategic Ventures", slug: "/services/strategic" },
-    { name: "Design Studio", slug: "/services/design" },
-    { name: "Culinary Arts", slug: "/services/arts" },
-    { name: "Health & Wellness", slug: "/services/health" },
-    { name: "All Services", slug: "/services" },
-  ];
+  // 2. Fetch Active Services Dynamically From Sanity
+  useEffect(() => {
+    async function getNavigationServices() {
+      try {
+        // Query reads title and slug properties, ordering them alphabetically by title
+        const query = `*[_type == "service" && defined(slug.current)] | order(title asc) {
+          title,
+          slug
+        }`;
+        
+        const data: SanityServiceNode[] = await client.fetch(query, {}, { cache: "no-store" });
+        
+        if (data && data.length > 0) {
+          const parsedServices: DynamicServiceRoute[] = data.map((node) => ({
+            name: node.title,
+            slug: `/services/${node.slug.current}`,
+          }));
+
+          // Append static fallback catch-all routing destination to the tail end of the matrix
+          setDynamicServices([...parsedServices, { name: "All Services", slug: "/services" }]);
+        } else {
+          // Absolute local fallback state if CMS data stream returns empty
+          setDynamicServices([{ name: "All Services", slug: "/services" }]);
+        }
+      } catch (error) {
+        console.error("Critical navigation engine pipeline extraction failure:", error);
+        setDynamicServices([{ name: "All Services", slug: "/services" }]);
+      }
+    }
+
+    getNavigationServices();
+  }, []);
 
   const leftLinks = [
     { name: "Home", href: "/" },
@@ -43,7 +82,7 @@ const Navbar = () => {
   if (!mounted) return <div className="h-20" />;
 
   return (
-    <nav className="fixed top-0 w-full z-200 pb-4"> {/* increased z-index */}
+    <nav className="fixed top-0 w-full z-[200] pb-4">
       <div className="px-6 py-3 border dark:bg-zinc-950/80 bg-white/80 backdrop-blur-xl border-zinc-200 dark:border-white/10 shadow-lg transition-all duration-500">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           
@@ -64,6 +103,7 @@ const Navbar = () => {
               />
             ))}
 
+            {/* DYNAMIC DESKTOP DROP SYSTEM */}
             <div 
               className="relative"
               onMouseEnter={() => setIsServicesOpen(true)}
@@ -84,9 +124,9 @@ const Navbar = () => {
                     className="absolute top-full left-0 pt-2 w-72"
                   >
                     <div className="bg-white dark:bg-zinc-900 border dark:border-white/10 border-zinc-200 rounded-xl shadow-2xl p-2 overflow-hidden">
-                      {services.map((service) => (
+                      {dynamicServices.map((service) => (
                         <Link
-                          key={service.name}
+                          key={service.slug}
                           href={service.slug}
                           className="group block px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-500 hover:bg-zinc-50 dark:hover:bg-white/5 rounded-lg transition-all"
                         >
@@ -113,8 +153,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Controls always above */}
-          <div className="relative z-300 flex items-center gap-2 md:gap-4">
+          <div className="relative z-[300] flex items-center gap-2 md:gap-4">
             <motion.button
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.9 }}
@@ -127,6 +166,7 @@ const Navbar = () => {
             <button 
               className="lg:hidden p-2.5 rounded-xl dark:bg-white/5 bg-white border dark:border-white/10 border-zinc-200"
               onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle structural menu layout overlay"
             >
               {isOpen ? <FaXmark size={18} /> : <FaBars size={18} />}
             </button>
@@ -134,29 +174,27 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* MOBILE MENU */}
+      {/* DYNAMIC MOBILE OVERLAY SYSTEM */}
       <AnimatePresence>
         {isOpen && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-150 lg:hidden"
-            onClick={() => setIsOpen(false)} // click anywhere closes
+            className="fixed inset-0 z-[150] lg:hidden"
+            onClick={() => setIsOpen(false)}
           >
-            {/* Overlay */}
             <div className="absolute inset-0 mt-20" />
 
-            {/* Menu panel */}
             <motion.div 
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
-              className="absolute right-0 top-15 w-full h-full dark:bg-zinc-950 bg-white pt-8 px-8"
+              onClick={(e) => e.stopPropagation()}
+              className="absolute right-0 top-15 w-full h-full dark:bg-zinc-950 bg-white pt-8 px-8 overflow-y-auto pb-24"
             >
-              <div className="flex flex-col gap-4 max-w-md ">
+              <div className="flex flex-col gap-4 max-w-md">
                 {leftLinks.map((link) => (
                   <MobileNavLink key={link.name} link={link} pathname={pathname} setIsOpen={setIsOpen} />
                 ))}
@@ -178,12 +216,14 @@ const Navbar = () => {
                         exit={{ height: 0, opacity: 0 }}
                         className="overflow-hidden flex flex-col gap-3 pl-4 pt-2 pb-4"
                       >
-                        {services.map((service) => (
+                        {dynamicServices.map((service) => (
                           <Link 
-                            key={service.name} 
+                            key={service.slug} 
                             href={service.slug} 
                             onClick={() => setIsOpen(false)}
-                            className="text-lg font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 active:text-blue-600"
+                            className={`text-lg font-bold uppercase tracking-widest transition-colors ${
+                              pathname === service.slug ? "text-blue-600" : "text-zinc-500 dark:text-zinc-400 active:text-blue-600"
+                            }`}
                           >
                             {service.name}
                           </Link>

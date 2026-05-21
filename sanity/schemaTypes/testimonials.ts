@@ -1,19 +1,17 @@
 import { defineField, defineType } from "sanity";
-
 import { MessageSquare } from "lucide-react";
 
 export const testimonials = defineType({
   name: "testimonials",
-  title: "Partner Testimonials",
+  title: "Home Testimonials",
   type: "document",
   icon: MessageSquare,
-
   fields: [
     defineField({
       name: "author",
       title: "Author Name",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().error("Author name is missing and required."),
     }),
     defineField({
       name: "role",
@@ -29,17 +27,16 @@ export const testimonials = defineType({
     }),
     defineField({
       name: "quote",
-
       title: "Testimonial Quote",
       type: "text",
       rows: 4,
-      validation: (Rule) => Rule.required().max(300),
+      validation: (Rule) => Rule.required().max(300).warning("Shorter text keeps the layout compact and clean."),
     }),
     defineField({
       name: "stat",
-      title: "Impact Metric / Stat",
+      title: "Impact Metric / Highlight Tag",
       type: "string",
-      description: "e.g., '25% Bottom Line' or '340% ROI'",
+      description: "Examples: '4.8x ROI', '+60% conversion', 'Saved 40+ hours'",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -47,7 +44,7 @@ export const testimonials = defineType({
       title: "Star Rating",
       type: "number",
       initialValue: 5,
-  options: {
+      options: {
         list: [1, 2, 3, 4, 5],
         layout: "radio",
       },
@@ -55,10 +52,16 @@ export const testimonials = defineType({
     }),
     defineField({
       name: "order",
-      title: "Display Order",
+      title: "Display Order Index",
       type: "number",
-      description: "Used to control the sequence of testimonials (ascending).",
+      description: "Controls the rendering order weight (lowest index appears first).",
+      initialValue: 1,
     }),
   ],
-
+  preview: {
+    select: {
+      title: "author",
+      subtitle: "company",
+    },
+  },
 });

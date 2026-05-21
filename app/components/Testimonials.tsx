@@ -1,218 +1,227 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence, PanInfo } from "framer-motion";
-import { Quote, Star, ChevronUp, ChevronDown } from "lucide-react";
+import React, { useState, useCallback, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Quote, Star, ArrowLeft, ArrowRight } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 
-interface Testimonial {
+/* ---------------------- TYPES ---------------------- */
+
+export interface TestimonialItem {
   _id: string;
+  quote: string;
   author: string;
   role: string;
   company: string;
-  quote: string;
   stat: string;
   stars: number;
 }
 
-interface TestimonialsProps {
-  testimonialsData?: Testimonial[];
+interface HomeTestimonialsProps {
+  testimonialsData: TestimonialItem[]; // Updated interface name
 }
 
-export default function VerticalTestimonials({ testimonialsData = [] }: TestimonialsProps) {
-  // tuple tracking: [currentIndex, direction (-1 for up/prev, 1 for down/next)]
-  const [[page, direction], setPage] = useState([0, 0]);
+/* ---------------------- SUB-COMPONENT: STARS ---------------------- */
 
-  if (!testimonialsData || testimonialsData.length === 0) return null;
+const InteractiveStars = ({ count }: { count: number }) => {
+  return (
+    <div className="flex gap-1 mb-4">
+      {[...Array(5)].map((_, i) => (
+        <Star
+          key={i}
+          className={`w-4 h-4 ${
+            i < count
+              ? "fill-blue-600 text-blue-600 dark:fill-blue-400 dark:text-blue-400 drop-shadow-[0_0_6px_rgba(37,99,235,0.3)]"
+              : "text-zinc-200 dark:text-zinc-700 fill-transparent"
+          }`}
+        />
+      ))}
+    </div>
+  );
+};
 
-  const currentIndex = ((page % testimonialsData.length) + testimonialsData.length) % testimonialsData.length;
-  const current = testimonialsData[currentIndex];
+/* ---------------------- MAIN COMPONENT ---------------------- */
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-  };
-
-  const paginate = (newDirection: number) => {
-    setPage([page + newDirection, newDirection]);
-  };
-
-  // Handle vertical drag mechanics
-  const handleDragEnd = (_event: any, info: PanInfo) => {
-    const swipeThreshold = 40; // Minimum vertical distance to register a slide switch
-    if (info.offset.y < -swipeThreshold) {
-      paginate(1); // Swiped Up -> Next Slide (moves down)
-    } else if (info.offset.y > swipeThreshold) {
-      paginate(-1); // Swiped Down -> Previous Slide (moves up)
-    }
-  };
-
-  // Dynamic vertical animation variants
-  const verticalSlideVariants = {
-    enter: (dir: number) => ({
-      y: dir > 0 ? 80 : -80,
-      opacity: 0,
-    }),
-    center: {
-      y: 0,
-      opacity: 1,
+const HomeTestimonials = ({ testimonialsData = [] }: HomeTestimonialsProps) => { // Updated component name
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: true,
+      duration: 35,
     },
-    exit: (dir: number) => ({
-      y: dir < 0 ? 80 : -80,
-      opacity: 0,
-    }),
-  };
+    [Autoplay({ delay: 6000, stopOnInteraction: false, stopOnMouseEnter: true })]
+  );
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+  const scrollTo = useCallback((index: number) => emblaApi && emblaApi.scrollTo(index), [emblaApi]);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    setScrollSnaps(emblaApi.scrollSnapList());
+    onSelect();
+    emblaApi.on("select", onSelect);
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
+  // CMS Empty State Fallback UI
+  if (!testimonialsData || testimonialsData.length === 0) {
+    return (
+      <section className="min-h-[60vh] flex items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+        <div className="text-center p-8 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl max-w-sm">
+          <p className="text-zinc-500 dark:text-zinc-400 text-sm">
+            No testimonials found. Publish content in your Sanity Studio dashboard to populate this section.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section className="relative grid min-h-[600px] w-full grid-cols-1 md:grid-cols-12 bg-zinc-50 dark:bg-zinc-950 overflow-hidden border-t border-zinc-200 dark:border-white/5 select-none">
-      
-      {/* LEFT SIDE IMAGERY (Spans 5 columns on desktop) */}
-      <div className="relative h-48 w-full md:h-auto md:col-span-5 overflow-hidden group">
-        <img
-          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" 
-          alt="Collaboration & Impact"
-          className="h-full w-full object-cover grayscale dark:opacity-80 transition-transform duration-700 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-zinc-900/10 dark:bg-zinc-950/20 mix-blend-multiply" />
-      </div>
-
-      {/* RIGHT SIDE CONTENT (Spans 7 columns on desktop) */}
-      <div className="flex flex-col justify-between p-8 md:p-12 lg:p-20 md:col-span-7 bg-white dark:bg-zinc-900/40 backdrop-blur-md relative border-l border-zinc-200 dark:border-white/5 touch-pan-x">
+    <section className="relative min-h-screen flex items-center bg-white dark:bg-[#09090b] overflow-hidden transition-colors duration-1000">
+      <div className="flex flex-col lg:flex-row w-full h-full min-h-screen">
         
-        {/* Background Decorative Watermark */}
-        <div className="absolute right-12 bottom-12 text-zinc-900/[0.02] dark:text-white/[0.02] pointer-events-none">
-          <Quote size={240} strokeWidth={1} />
+        {/* LEFT SIDE: CINEMATIC VISUAL PANEL */}
+        <div className="relative w-full lg:w-1/2 h-[40vh] lg:h-screen overflow-hidden bg-zinc-900">
+          <motion.div 
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0"
+          >
+            <img
+              src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+              alt="Strategic Partnership"
+              className="w-full h-full object-cover grayscale brightness-[0.5] contrast-[1.15]"
+            />
+          </motion.div>
+
+          {/* Color Depth Gradient Layer Blends */}
+          <div className="absolute inset-0 bg-blue-950/20 mix-blend-overlay z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/70 via-black/20 to-transparent z-20" />
+
+          <div className="absolute bottom-8 left-8 lg:bottom-20 lg:left-20 z-30 max-w-md">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-[1px] w-8 bg-blue-500" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-blue-400">
+                True Partnership
+              </span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white leading-none drop-shadow-2xl">
+              Impact <br />
+              <span className="italic font-extralight text-zinc-400 opacity-90">by Design.</span>
+            </h2>
+          </div>
         </div>
 
-        {/* Header Tagline */}
-        <div className="mb-8 pointer-events-none">
-          <span className="text-blue-600 dark:text-blue-400 font-bold tracking-[0.2em] uppercase text-xs block mb-2">
-            Voice of users
-          </span>
-          <div className="w-12 h-0.5 bg-blue-600 dark:bg-blue-400" />
-        </div>
-
-        {/* Main Content Area Container with Side-by-Side Content + Dot Navigation Layout */}
-        <div className="relative flex-1 flex flex-row items-center gap-6 min-h-[340px]">
+        {/* RIGHT SIDE: CAROUSEL CONTENT */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-between px-6 md:px-16 lg:px-24 py-12 lg:py-20 relative min-h-[60vh] lg:min-h-screen">
           
-          {/* Vertical Track Engine */}
-          <div className="flex-1 relative h-full flex items-center cursor-grab active:cursor-grabbing">
-            <AnimatePresence initial={false} custom={direction} mode="wait">
-              <motion.div
-                key={page}
-                custom={direction}
-                variants={verticalSlideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                drag="y" // Changed axis constraint to Y
-                dragConstraints={{ top: 0, bottom: 0 }}
-                dragElastic={0.3}
-                onDragEnd={handleDragEnd}
-                transition={{ type: "spring", stiffness: 200, damping: 24 }}
-                className="w-full flex flex-col justify-between space-y-6"
-              >
-                <div className="space-y-4">
-                  <h3 className="text-4xl md:text-5xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter leading-none">
-                    {current.stat}
-                  </h3>
-
-                  <blockquote className="text-lg md:text-xl font-medium text-zinc-700 dark:text-zinc-300 leading-relaxed italic">
-                    "{current.quote}"
-                  </blockquote>
-                  
-                  {/* Stars moved directly underneath the quote */}
-                  <div className="flex gap-1 items-center pt-1">
-                    {Array.from({ length: current.stars }).map((_, i) => (
-                      <Star 
-                        key={i} 
-                        size={16} 
-                        className="text-blue-500 fill-blue-500 dark:text-blue-400 dark:fill-blue-400 drop-shadow-[0_0_6px_rgba(59,130,246,0.4)]"
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Author Block */}
-                <div className="flex items-center gap-4 border-t border-zinc-100 dark:border-white/5 pt-4">
-                  <div className="w-10 h-10 rounded-lg bg-blue-600/10 dark:bg-blue-500/10 border border-blue-600/10 dark:border-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-xs tracking-wider shrink-0">
-                    {getInitials(current.author)}
-                  </div>
-
-                  <div className="overflow-hidden">
-                    <h4 className="text-base font-bold text-zinc-900 dark:text-white tracking-tight truncate">
-                      {current.author}
-                    </h4>
-                    <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 truncate">
-                      {current.role} at <span className="text-blue-600 dark:text-blue-400 font-semibold">{current.company}</span>
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+          {/* Top Progress Visual Indicator */}
+          <div className="w-full relative z-10">
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.8em] text-zinc-400 dark:text-zinc-500 mb-4">
+              Voice of Partnership
+            </h3>
+            <div className="w-full h-[2px] bg-zinc-100 dark:bg-zinc-800/60 overflow-hidden rounded-full">
+              <motion.div 
+                key={selectedIndex}
+                initial={{ x: "-100%" }}
+                animate={{ x: "0%" }}
+                transition={{ duration: 6, ease: "linear" }}
+                className="h-full bg-blue-600 dark:bg-blue-500 rounded-full"
+              />
+            </div>
           </div>
 
-          {/* SIDE INDICATOR: Vertical Dot Track Matrix */}
-          {testimonialsData.length > 1 && (
-            <div className="hidden sm:flex flex-col gap-2 z-10 shrink-0">
-              {testimonialsData.map((_, index) => (
+          {/* Main Carousel Slider Track */}
+          <div className="overflow-hidden my-auto py-8 cursor-grab active:cursor-grabbing" ref={emblaRef}>
+            <div className="flex">
+              {testimonialsData.map((t) => (
+                <div key={t._id} className="flex-[0_0_100%] min-w-0 px-1 flex flex-col justify-center group">
+                  <Quote className="w-10 h-10 text-blue-600/10 dark:text-blue-400/10 mb-6 group-hover:text-blue-500/20 transition-colors duration-500" />
+                  
+                  <p className="text-xl md:text-2xl lg:text-3xl font-medium text-zinc-800 dark:text-zinc-100 leading-snug mb-6 tracking-tight">
+                    "{t.quote}"
+                  </p>
+                  
+                  <InteractiveStars count={t.stars} />
+
+                  <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-zinc-100 dark:border-zinc-900">
+                    <div>
+                      <h4 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
+                        {t.author}
+                      </h4>
+                      <p className="text-[11px] uppercase tracking-[0.15em] text-zinc-400 dark:text-zinc-500 mt-0.5">
+                        {t.role} <span className="mx-1.5 text-zinc-300 dark:text-zinc-800">|</span> {t.company}
+                      </p>
+                    </div>
+
+                    <div className="px-4 py-1.5 rounded-full border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 shadow-sm">
+                      <span className="text-[10px] font-bold uppercase tracking-tight text-blue-600 dark:text-blue-400">
+                        {t.stat}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Interactive Navigation Control Strip */}
+          <div className="w-full flex items-center justify-between pt-4 relative z-10">
+            {/* Pagination Indicators */}
+            <div className="flex gap-2">
+              {scrollSnaps.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => {
-                    const dir = index > currentIndex ? 1 : -1;
-                    setPage([index, dir]);
-                  }}
-                  className={`w-1.5 rounded-full transition-all duration-300 ${
-                    index === currentIndex 
-                      ? "h-6 bg-blue-600 dark:bg-blue-400" 
-                      : "h-1.5 bg-zinc-300 dark:bg-zinc-700 hover:bg-zinc-400 dark:hover:bg-zinc-600"
+                  onClick={() => scrollTo(index)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === selectedIndex 
+                      ? "w-6 bg-blue-600 dark:bg-blue-500" 
+                      : "w-2 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700"
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
-          )}
-        </div>
 
-        {/* FOOTER CONTROLS: Arrow Navigation */}
-        {testimonialsData.length > 1 && (
-          <div className="flex items-center justify-between sm:justify-end mt-8 pt-4 border-t border-zinc-100 dark:border-white/5 z-10">
-            {/* Mobile-only visible dot system underneath content */}
-            <div className="flex gap-1.5 sm:hidden">
-              {testimonialsData.map((_, index) => (
-                <span
-                  key={index}
-                  className={`h-1.5 rounded-full transition-all ${
-                    index === currentIndex ? "w-4 bg-blue-600" : "w-1.5 bg-zinc-300"
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* Top-Down Control Toggle Arrows */}
-            <div className="flex gap-2">
+            {/* Manual Step Arrows */}
+            <div className="flex gap-3">
               <button
-                onClick={() => paginate(-1)}
-                className="p-2 rounded-lg border border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
-                aria-label="Previous testimonial"
+                onClick={scrollPrev}
+                className="p-2.5 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+                aria-label="Previous slide"
               >
-                <ChevronUp size={16} />
+                <ArrowLeft className="w-4 h-4" />
               </button>
               <button
-                onClick={() => paginate(1)}
-                className="p-2 rounded-lg border border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
-                aria-label="Next testimonial"
+                onClick={scrollNext}
+                className="p-2.5 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+                aria-label="Next slide"
               >
-                <ChevronDown size={16} />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
-        )}
+
+          {/* Extra Large Structural Watermark Index */}
+          <div className="absolute bottom-4 right-6 lg:bottom-12 lg:right-12 text-[14vh] font-black text-zinc-100 dark:text-zinc-900/10 -z-10 select-none pointer-events-none transition-colors duration-1000">
+            0{selectedIndex + 1}
+          </div>
+        </div>
 
       </div>
     </section>
   );
-}
+};
+
+export default HomeTestimonials;

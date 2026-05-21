@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import FrameworkCarousel from './components/IntegratedFrameWork';
 import ImpactHero from './components/YourJourneyImpact';
 import HowWeWork from './components/HowWeWork';
-import Testimonials from './components/Testimonials';
+import HomeTestimonials from './components/Testimonials'; // Updated import name
 import FinalRoadmapCTA from './components/FinalRoadmapCTA';
 import WhyTheTAG from './components/WhyTheTag'; 
 
@@ -14,7 +14,7 @@ import { client } from '@/sanity/lib/client';
 // Fetch Testimonials Data
 async function getTestimonialsData() {
   try {
-    const query = `*[_type == "testimonial"] {
+    const query = `*[_type == "testimonials"] | order(order asc) {
       _id,
       author,
       role,
@@ -33,7 +33,6 @@ async function getTestimonialsData() {
 // Fetch Core Values Data
 async function getCoreValuesData() {
   try {
-    // [0] extracts the single object out of the array matching this schema doc type
     const query = `*[_type == "coreValues"][0] {
       heading,
       technologies[] {
@@ -62,7 +61,6 @@ async function getCoreValuesData() {
 }
 
 const Page = async () => {
-  // Execute calls in parallel to preserve performance structure
   const [testimonialsData, coreValuesData] = await Promise.all([
     getTestimonialsData(),
     getCoreValuesData(),
@@ -73,7 +71,6 @@ const Page = async () => {
       <Navbar />
       <Home />
       
-      {/* Dynamic injection payload component entry point */}
       <CoreValues data={coreValuesData} />
       
       <WhyTheTAG />
@@ -81,7 +78,8 @@ const Page = async () => {
       <ImpactHero />
       <HowWeWork />
       
-      <Testimonials testimonialsData={testimonialsData} />
+      {/* Updated component execution matching the new name */}
+      <HomeTestimonials testimonialsData={testimonialsData} />
       
       <FinalRoadmapCTA />
     </div>
