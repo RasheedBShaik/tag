@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  ArrowRight, Share2, Terminal, Zap, Shield, Fingerprint, ChevronRight, 
-  Plus, Minus, Mail, Calendar, Search, Activity, Compass, Target, HelpCircle
+  ArrowRight, Share2, Terminal, Zap, Shield, Fingerprint, 
+  Activity, Compass, Target, HelpCircle, Mail
 } from "lucide-react";
 
 if (typeof window !== "undefined") {
@@ -48,7 +48,7 @@ interface ApproachCMSData {
   principles: PrincipleItem[];
 }
 
-/* ---------------------- BIOMETRIC INTERACTIVE CANVASES ---------------------- */
+/* ---------------------- BIOMETRIC INTERACTIVE CANVAS ---------------------- */
 interface NeuralNode {
   x: number;
   y: number;
@@ -62,7 +62,7 @@ interface NeuralNode {
   cluster: "heart" | "mind" | "system";
 }
 
-const HeroBiometricArchitecture = () => {
+export const SharedBiometricArchitecture = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -71,7 +71,6 @@ const HeroBiometricArchitecture = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animationId: number;
     let w = (canvas.width = window.innerWidth);
     let h = (canvas.height = window.innerHeight);
 
@@ -79,8 +78,29 @@ const HeroBiometricArchitecture = () => {
     const nodes: NeuralNode[] = [];
     const mouse = { x: -1000, y: -1000, tx: -1000, ty: -1000, active: false };
 
-    // Decays smoothly from 1.0 down to 0 on entry to drive canvas node shadows
-    let introSurgeFactor = 1.0;
+    const surgeState = {
+      introSurgeFactor: 0.0,
+      entryPulseRadius: 0
+    };
+    const maxEntryPulseRadius = Math.max(w, h) * 0.55;
+
+    const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+    tl.to(surgeState, {
+      introSurgeFactor: 1.5,
+      entryPulseRadius: maxEntryPulseRadius * 0.4,
+      duration: 1.2,
+    })
+    .to(surgeState, {
+      entryPulseRadius: maxEntryPulseRadius,
+      introSurgeFactor: 0.2,
+      duration: 1.8,
+      ease: "power3.out"
+    }, "-=0.3")
+    .to(surgeState, {
+      introSurgeFactor: 0,
+      duration: 1.0,
+      ease: "power2.inOut"
+    }, "-=0.8");
 
     const initNodes = (width: number, height: number) => {
       nodes.length = 0;
@@ -133,12 +153,6 @@ const HeroBiometricArchitecture = () => {
       ctx.clearRect(0, 0, w, h);
       const dark = document.documentElement.classList.contains("dark");
 
-      // Diminish initial charge step-by-step frame parameters
-      if (introSurgeFactor > 0) {
-        introSurgeFactor -= 0.008;
-        if (introSurgeFactor < 0) introSurgeFactor = 0;
-      }
-
       if (mouse.active) {
         mouse.x += (mouse.tx - mouse.x) * 0.1;
         mouse.y += (mouse.ty - mouse.y) * 0.1;
@@ -147,7 +161,6 @@ const HeroBiometricArchitecture = () => {
       }
 
       const lColor = dark ? "rgba(59, 130, 246, 0.04)" : "rgba(29, 78, 216, 0.03)";
-      const actLColor = dark ? "rgba(96, 165, 250, 0.22)" : "rgba(37, 99, 235, 0.15)";
 
       nodes.forEach(n => {
         n.phase += n.speed;
@@ -160,6 +173,20 @@ const HeroBiometricArchitecture = () => {
           const a = Math.atan2(ty - mouse.y, tx - mouse.x);
           tx += Math.cos(a) * f * 40;
           ty += Math.sin(a) * f * 40;
+        }
+
+        if (surgeState.introSurgeFactor > 0.01) {
+          const centerX = w * 0.5;
+          const centerY = h * 0.5;
+          const distFromCenter = Math.hypot(tx - centerX, ty - centerY);
+          const waveDelta = Math.abs(distFromCenter - surgeState.entryPulseRadius);
+          
+          if (waveDelta < 90) {
+            const force = (90 - waveDelta) / 90 * surgeState.introSurgeFactor;
+            const angleFromCenter = Math.atan2(ty - centerY, tx - centerX);
+            tx += Math.cos(angleFromCenter) * force * 35;
+            ty += Math.sin(angleFromCenter) * force * 35;
+          }
         }
 
         n.vx += (tx - n.x) * 0.05; n.vy += (ty - n.y) * 0.05;
@@ -177,8 +204,14 @@ const HeroBiometricArchitecture = () => {
             const near1 = Math.hypot(mouse.x - n1.x, mouse.y - n1.y) < 170;
             const near2 = Math.hypot(mouse.x - n2.x, mouse.y - n2.y) < 170;
             
-            if (near1 || near2 || introSurgeFactor > 0.1) {
-              const weight = introSurgeFactor > 0 ? Math.max(introSurgeFactor * 0.25, 0.15) : 0.15;
+            let waveBrighten = false;
+            if (surgeState.introSurgeFactor > 0.05) {
+              const d1 = Math.hypot(n1.x - w * 0.5, n1.y - h * 0.5);
+              if (Math.abs(d1 - surgeState.entryPulseRadius) < 50) waveBrighten = true;
+            }
+
+            if (near1 || near2 || surgeState.introSurgeFactor > 0.1 || waveBrighten) {
+              const weight = surgeState.introSurgeFactor > 0 ? Math.max(surgeState.introSurgeFactor * 0.25, 0.15) : 0.15;
               ctx.strokeStyle = dark ? `rgba(96, 165, 250, ${weight})` : `rgba(37, 99, 235, ${weight})`;
             } else {
               ctx.strokeStyle = lColor;
@@ -192,13 +225,15 @@ const HeroBiometricArchitecture = () => {
       nodes.forEach(n => {
         ctx.beginPath(); 
         const near = Math.hypot(mouse.x - n.x, mouse.y - n.y) < 170;
-        const activeSurge = introSurgeFactor > 0.05;
+        const dCenter = Math.hypot(n.x - w * 0.5, n.y - h * 0.5);
+        const insidePulseWave = surgeState.introSurgeFactor > 0.05 && Math.abs(dCenter - surgeState.entryPulseRadius) < 60;
+        const activeSurge = surgeState.introSurgeFactor > 0.05 || insidePulseWave;
 
         if (near || activeSurge) {
-          const intensity = activeSurge ? introSurgeFactor : 1;
-          ctx.shadowBlur = activeSurge ? 20 * introSurgeFactor : 12;
+          const intensity = insidePulseWave ? surgeState.introSurgeFactor * 1.2 : (activeSurge ? surgeState.introSurgeFactor : 1);
+          ctx.shadowBlur = insidePulseWave ? 25 * surgeState.introSurgeFactor : (activeSurge ? 20 * surgeState.introSurgeFactor : 12);
           ctx.shadowColor = n.cluster === "heart" ? `rgba(244, 63, 94, ${intensity})` : `rgba(37, 99, 235, ${intensity})`;
-          ctx.arc(n.x, n.y, n.radius * (activeSurge ? 1 + introSurgeFactor * 0.4 : 1), 0, Math.PI * 2);
+          ctx.arc(n.x, n.y, n.radius * (activeSurge ? 1 + surgeState.introSurgeFactor * 0.5 : 1), 0, Math.PI * 2);
           ctx.fillStyle = n.cluster === "heart" ? "#f43f5e" : "#2563eb";
         } else {
           ctx.shadowBlur = 0;
@@ -208,11 +243,18 @@ const HeroBiometricArchitecture = () => {
         ctx.fill();
       });
 
+      if (surgeState.introSurgeFactor > 0.05) {
+        ctx.beginPath();
+        ctx.arc(w * 0.5, h * 0.5, surgeState.entryPulseRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = dark ? `rgba(96, 165, 250, ${surgeState.introSurgeFactor * 0.07})` : `rgba(37, 99, 235, ${surgeState.introSurgeFactor * 0.04})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
       ctx.shadowBlur = 0;
-      animationId = requestAnimationFrame(loop);
     };
 
-    loop();
+    gsap.ticker.add(loop);
 
     const onResize = () => {
       w = canvas.width = window.innerWidth;
@@ -225,13 +267,13 @@ const HeroBiometricArchitecture = () => {
       window.removeEventListener("mousemove", onMouseMove);
       document.body.removeEventListener("mouseleave", onMouseLeave);
       window.removeEventListener("resize", onResize);
-      cancelAnimationFrame(animationId);
+      tl.kill();
+      gsap.ticker.remove(loop);
     };
   }, []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {/* Dynamic light pulse background spot - expands smoothly without resizing layout boxes */}
       <motion.div 
         initial={{ opacity: 0.7, scale: 0.7 }}
         animate={{ opacity: 0.14, scale: 1.05 }}
@@ -244,13 +286,21 @@ const HeroBiometricArchitecture = () => {
   );
 };
 
-/* ---------------------- MAIN PAGE CONTAINER ---------------------- */
+/* ---------------------- MAIN PAGE COMPONENT ---------------------- */
 export default function OurApproachPage() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 35 });
   
-  const [isHovered, setIsHovered] = useState(false);
   const [cmsData, setCmsData] = useState<ApproachCMSData | null>(null);
+
+  // Sync animation entrance states to match the unified framework
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [revealProgress, setRevealProgress] = useState(0);
+
+  useEffect(() => {
+    setIsRevealed(true);
+    setRevealProgress(150);
+  }, []);
 
   const copyFallback: ApproachCMSData = {
     heroTitle: "Clarity. Collaboration.",
@@ -265,23 +315,23 @@ export default function OurApproachPage() {
       { value: "Always", label: "Honest", description: "Counsel always — including when we're not the right fit" }
     ],
     visionTitleBlock: "A world where technology serves human flourishing.",
-    visionText: "We believe technology is most powerful when it amplifies what humans do best — creativity, empathy, judgment, and community — rather than replacing or obscuring it. The organizations that will lead in the next decade are those who understand this and build accordingly. Our role is to help build those organizations.",
+    visionText: "We believe technology is most powerful when it amplifies what humans do best — creativity, empathy, judgment, and community — rather than replacing or obscuring it. Our role is to help build those organizations.",
     missionTitleBlock: "Help organizations build genuine independence.",
-    missionText: "Not managed dependence. Not annual retainer dependence. Genuine capability — where your team can run the strategy, maintain the systems, and make the decisions without us. This is harder and slower than the conventional consulting model. It is also the only model we find worth pursuing.",
+    missionText: "Not managed dependence. Not annual retainer dependence. Genuine capability — where your team can run the strategy, maintain the systems, and make decisions independently.",
     pillars: [
       { title: "Our North Star", subtitle: "Vision", description: "A world where technology serves human flourishing — not the other way around" },
       { title: "Why We Exist", subtitle: "Mission", description: "Help organizations build the capability to be genuinely independent of their advisors" },
       { title: "How We Get There", subtitle: "Method", description: "Heart · Mind · Technology — applied in sequence, no shortcuts" },
       { title: "The Measure", subtitle: "Standard", description: "Engineering Digital Sovereignty — measurable, auditable, and genuinely yours" },
-      { title: "We Practice It", subtitle: "Proof", description: "The Well-being First AI Companion — our own methodology, applied to our own hardest problem" }
+      { title: "We Practice It", subtitle: "Proof", description: "The Well-being First AI Companion — our own methodology, applied to our own codebase" }
     ],
     principles: [
-      { number: "01", title: "People before platforms", subtitle: "Empathy is not a soft skill", description: "Every technology decision is a human decision first. We start every engagement — regardless of domain — by understanding the people who will live inside what we build." },
-      { number: "02", title: "Clarity over comprehensiveness", subtitle: "A clear plan beats a complete one", description: "We would rather deliver a focused strategy with explicit trade-offs than a comprehensive document that attempts to cover every scenario and commits to none of them." },
-      { number: "03", title: "Sovereignty by design", subtitle: "Independence is an architectural decision", description: "Digital sovereignty is not added at the end. It is designed in from the first architecture decision — data residency, vendor selection, and API design all follow from this commitment." },
-      { number: "04", title: "Outcomes over outputs", subtitle: "Deliverables are a means, not an end", description: "We agree on what success looks like before we start — in writing — and report against it honestly. A beautiful deliverable that doesn't move the metric is a failed engagement." },
-      { number: "05", title: "Honest counsel", subtitle: "Including when it's uncomfortable", description: "We will tell you when an idea isn't ready, a vendor is wrong for you, or an engagement should end early. Commercial pressure to say yes is the enemy of good work." },
-      { number: "06", title: "Builders and advisors", subtitle: "We practice what we preach", description: "We are actively building the Well-being First AI Companion. When we advise on AI governance, we are solving that problem in our own codebase. Theory and practice are inseparable for us." }
+      { number: "01", title: "People before platforms", subtitle: "Empathy is not a soft skill", description: "Every technology decision is a human decision first. We start every engagement by understanding the people inside." },
+      { number: "02", title: "Clarity over comprehensiveness", subtitle: "A clear plan beats a complete one", description: "We deliver focused strategies with explicit trade-offs instead of dynamic, unreadable documentation arrays." },
+      { number: "03", title: "Sovereignty by design", subtitle: "Independence is architectural", description: "Digital sovereignty is built-in from day one. Data residency, vendor choice, and API mapping conform to this constraint." },
+      { number: "04", title: "Outcomes over outputs", subtitle: "Deliverables are a means", description: "We align on metrics early, executing strategies that move core numbers rather than building aesthetic overhead." },
+      { number: "05", title: "Honest counsel", subtitle: "Including when uncomfortable", description: "We maintain uncompromised technical integrity, advising transparently even when structural modifications shift timelines." },
+      { number: "06", title: "Builders and advisors", subtitle: "We practice what we preach", description: "We run our own architecture protocols. Theory and absolute deployment agility are integrated directly." }
     ]
   };
 
@@ -290,23 +340,14 @@ export default function OurApproachPage() {
       try {
         const { client } = await import("@/sanity/lib/client");
         const query = `*[_type == "ourApproach"][0] {
-          heroTitle,
-          heroTitleItalic,
-          heroDescription,
-          digitalSovereigntyBody,
-          foundationDescription,
-          metrics[] { value, label, description },
-          visionTitleBlock,
-          visionText,
-          missionTitleBlock,
-          missionText,
-          pillars[] { title, subtitle, description },
-          principles[] { number, title, subtitle, description }
+          heroTitle, heroTitleItalic, heroDescription, digitalSovereigntyBody, foundationDescription,
+          metrics[] { value, label, description }, visionTitleBlock, visionText, missionTitleBlock, missionText,
+          pillars[] { title, subtitle, description }, principles[] { number, title, subtitle, description }
         }`;
         const data = await client.fetch(query);
         if (data) setCmsData(data);
       } catch (e) {
-        console.warn("Using built-in copy content blocks. Pipeline link inactive.", e);
+        console.warn("Using baseline configuration matrices.", e);
       }
     }
     streamSanity();
@@ -315,11 +356,11 @@ export default function OurApproachPage() {
   const data = cmsData || copyFallback;
 
   const coreIcons = [
-    <Compass className="text-blue-500" size={22} key="c1" />,
-    <Target className="text-blue-500" size={22} key="c2" />,
-    <Activity className="text-blue-500" size={22} key="c3" />,
-    <Shield className="text-blue-500" size={22} key="c4" />,
-    <Terminal className="text-blue-500" size={22} key="c5" />
+    <Compass className="text-blue-500 group-hover:text-rose-500 transition-colors duration-300" size={22} key="c1" />,
+    <Target className="text-blue-500 group-hover:text-rose-500 transition-colors duration-300" size={22} key="c2" />,
+    <Activity className="text-blue-500 group-hover:text-rose-500 transition-colors duration-300" size={22} key="c3" />,
+    <Shield className="text-blue-500 group-hover:text-rose-500 transition-colors duration-300" size={22} key="c4" />,
+    <Terminal className="text-blue-500 group-hover:text-rose-500 transition-colors duration-300" size={22} key="c5" />
   ];
 
   const principleIcons = [
@@ -332,72 +373,92 @@ export default function OurApproachPage() {
     <div className="bg-[#fcfcfc] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100 transition-colors duration-500 overflow-x-hidden antialiased">
       <motion.div style={{ scaleX }} className="fixed top-0 left-0 right-0 h-[2px] bg-blue-600 origin-left z-50" />
 
-      {/* --- HERO SECTION --- */}
+      {/* --- HERO SECTION WITH UNIFIED ENTRANCE ANIMATION --- */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center pt-20">
-        <HeroBiometricArchitecture />
+        <SharedBiometricArchitecture />
         
-        {/* Dynamic page introduction load wrapper */}
+        {/* Dynamic circular reveal masking block wrapper matching parent architecture hooks */}
         <motion.div 
-          initial={{ opacity: 0, filter: "blur(8px)", y: 15 }}
-          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 space-y-10 max-w-4xl mx-auto"
+          animate={{ 
+            clipPath: `circle(${revealProgress}% at 50% 50%)`
+          }}
+          transition={{ type: "spring", stiffness: 45, damping: 20 }}
+          className="relative z-10 space-y-10 max-w-4xl mx-auto select-none mix-blend-normal [clip-path:circle(0%_at_50%_50%)]"
         >
           <div className="space-y-6">
-            <span className="text-xs font-mono font-bold tracking-[0.4em] uppercase text-blue-600 block">
+            <motion.span 
+              initial={{ opacity: 0, y: -15 }}
+              animate={isRevealed ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="text-xs font-mono font-bold tracking-[0.4em] uppercase text-blue-600 block"
+            >
               Our Approach
-            </span>
-            <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[0.95] uppercase text-zinc-900 dark:text-white">
+            </motion.span>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={isRevealed ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+              className="text-5xl md:text-8xl font-black tracking-tight leading-[0.95] uppercase text-zinc-900 dark:text-white"
+            >
               {data.heroTitle} <br />
               <span className="text-blue-600 dark:text-blue-500 font-serif normal-case font-normal block mt-1">
                 {data.heroTitleItalic}
               </span>
-            </h1>
-            <p className="max-w-2xl mx-auto text-base md:text-lg text-zinc-500 dark:text-zinc-400 leading-relaxed font-light">
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 15 }}
+              animate={isRevealed ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.35, ease: "easeOut" }}
+              className="max-w-2xl mx-auto text-base md:text-lg text-zinc-500 dark:text-zinc-400 leading-relaxed font-light"
+            >
               {data.heroDescription}
-            </p>
+            </motion.p>
           </div>
 
-          {/* Principle block with coordinated transient lighting wave */}
           <motion.div 
-            initial={{ boxShadow: "0 0 0px rgba(37,99,235,0)" }}
-            animate={{ 
-              boxShadow: ["0 0 0px rgba(37,99,235,0)", "0 0 45px rgba(37,99,235,0.18)", "0 0 0px rgba(37,99,235,0)"]
-            }}
-            transition={{ duration: 2.2, ease: "easeInOut", delay: 0.4 }}
-            className="max-w-3xl mx-auto p-8 rounded-3xl border border-zinc-200/60 dark:border-zinc-800/80 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md text-left"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isRevealed ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+            className="max-w-3xl mx-auto p-8 rounded-3xl border border-zinc-200/60 dark:border-zinc-800/80 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md text-left group hover:border-blue-500/40 dark:hover:border-blue-500/30 transition-colors duration-500"
           >
-            <p className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2">The Principle</p>
+            <p className="text-xs font-bold tracking-widest text-blue-600 dark:text-blue-400 uppercase mb-2 group-hover:text-rose-500 transition-colors duration-300">The Principle</p>
             <p className="text-sm md:text-base font-light text-zinc-700 dark:text-zinc-300 leading-relaxed">
               {data.digitalSovereigntyBody}
             </p>
           </motion.div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <button className="group relative px-7 py-3.5 bg-blue-600 text-white rounded-full overflow-hidden transition-all active:scale-95 text-sm font-medium">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            animate={isRevealed ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+          >
+            <button className="group relative px-7 py-3.5 bg-blue-600 text-white rounded-full overflow-hidden transition-all active:scale-95 text-sm font-medium shadow-lg shadow-blue-600/20">
               <span className="relative z-10 flex items-center gap-2">See How We Work <ArrowRight size={16} /></span>
-              <div className="absolute inset-0 bg-blue-500 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-rose-500 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
-            <button className="px-7 py-3.5 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900/60 transition-colors text-sm font-medium">
+            <button className="px-7 py-3.5 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900/60 transition-colors text-sm font-medium backdrop-blur-sm">
               Start a conversation &rarr;
             </button>
-          </div>
+          </motion.div>
         </motion.div>
       </section>
 
-      {/* --- FRAMEWORK GRID & METRICS --- */}
-      <section className="mx-auto max-w-7xl px-6 py-28 border-y border-zinc-100 dark:border-zinc-900">
+      {/* --- GRID & METRICS --- */}
+      <section className="relative mx-auto max-w-7xl px-6 py-28 border-y border-zinc-100 dark:border-zinc-900 z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-28">
-            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-blue-600">Our Foundation</h3>
+            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-blue-600 dark:text-blue-400">Our Foundation</h3>
             <p className="text-xl md:text-3xl font-light text-zinc-800 dark:text-zinc-200 leading-tight">
               {data.foundationDescription}
             </p>
           </div>
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
             {data.metrics?.map((item, idx) => (
-              <div key={idx} className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/80 group">
-                <div className="text-3xl font-black text-blue-600 mb-1">{item.value}</div>
+              <div key={idx} className="p-6 rounded-2xl bg-white/70 dark:bg-zinc-900/50 backdrop-blur-sm border border-zinc-200/60 dark:border-zinc-800/80 group hover:border-blue-500/40 dark:hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-600/[0.02] transition-all duration-500">
+                <div className="text-3xl font-black text-blue-600 dark:text-blue-500 group-hover:text-rose-500 transition-colors duration-300 mb-1">{item.value}</div>
                 <p className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-100 mb-1">{item.label}</p>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 font-light leading-relaxed">{item.description}</p>
               </div>
@@ -406,17 +467,17 @@ export default function OurApproachPage() {
         </div>
       </section>
 
-      {/* --- HORIZONTAL STEPPER TIMELINE BLOCK --- */}
+      {/* --- STEPPER TIMELINE BLOCK --- */}
       {data.pillars && data.pillars.length > 0 && (
-        <section className="py-24 border-b border-zinc-100 dark:border-zinc-900 px-6 max-w-7xl mx-auto">
+        <section className="relative py-24 border-b border-zinc-100 dark:border-zinc-900 px-6 max-w-7xl mx-auto z-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {data.pillars.map((pillar, index) => (
-              <div key={index} className="p-6 border-l-2 border-zinc-200 dark:border-zinc-800 hover:border-blue-500 transition-colors space-y-3">
+              <div key={index} className="group p-6 border-l-2 border-zinc-200 dark:border-zinc-800 hover:border-rose-500 dark:hover:border-rose-500 transition-colors duration-300 space-y-3 bg-white/[0.02] dark:bg-zinc-900/[0.01]">
                 <div className="flex items-center gap-2">
                   {coreIcons[index % coreIcons.length]}
                   <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">{pillar.subtitle}</span>
                 </div>
-                <h5 className="font-bold text-sm tracking-tight">{pillar.title}</h5>
+                <h5 className="font-bold text-sm tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">{pillar.title}</h5>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-light">{pillar.description}</p>
               </div>
             ))}
@@ -424,24 +485,24 @@ export default function OurApproachPage() {
         </section>
       )}
 
-      {/* --- VISION & MISSION PARAGRAPHS --- */}
-      <section className="py-28 px-6 max-w-7xl mx-auto">
+      {/* --- VISION & MISSION --- */}
+      <section className="relative py-28 px-6 max-w-7xl mx-auto z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-4 space-y-4 lg:sticky lg:top-28 h-fit">
             <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">Vision <br/>& Mission</h2>
-            <div className="h-1 w-12 bg-blue-600 rounded-full" />
+            <div className="h-1 w-12 bg-gradient-to-r from-blue-600 to-rose-500 rounded-full" />
             <p className="text-sm text-zinc-500 font-light">What we believe and why we exist.</p>
           </div>
           <div className="lg:col-span-8 space-y-20">
-            <div className="space-y-4">
-              <span className="text-xs font-mono font-bold tracking-widest uppercase text-blue-600 block">Vision</span>
+            <div className="space-y-4 group">
+              <span className="text-xs font-mono font-bold tracking-widest uppercase text-blue-600 dark:text-blue-400 block group-hover:text-rose-500 transition-colors duration-300">Vision</span>
               <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">{data.visionTitleBlock}</h4>
               <p className="text-base md:text-lg font-light text-zinc-500 dark:text-zinc-400 leading-relaxed">
                 {data.visionText}
               </p>
             </div>
-            <div className="space-y-4">
-              <span className="text-xs font-mono font-bold tracking-widest uppercase text-blue-600 block">Mission</span>
+            <div className="space-y-4 group">
+              <span className="text-xs font-mono font-bold tracking-widest uppercase text-blue-600 dark:text-blue-400 block group-hover:text-rose-500 transition-colors duration-300">Mission</span>
               <h4 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">{data.missionTitleBlock}</h4>
               <p className="text-base md:text-lg font-light text-zinc-500 dark:text-zinc-400 leading-relaxed">
                 {data.missionText}
@@ -451,7 +512,7 @@ export default function OurApproachPage() {
         </div>
       </section>
 
-      {/* --- INFINITE RUNLOOP GUIDING PRINCIPLES SLIDER --- */}
+      {/* --- GUIDING PRINCIPLES SOLID GRID --- */}
       {data.principles && data.principles.length > 0 && (
         <section className="relative z-10 py-24 bg-zinc-950 text-white overflow-hidden">
           <div className="absolute inset-0 opacity-5 pointer-events-none z-0">
@@ -471,35 +532,29 @@ export default function OurApproachPage() {
               <h3 className="text-3xl md:text-4xl font-medium uppercase tracking-tighter">What shapes every decision we make</h3>
             </div>
 
-            <div className="relative flex overflow-hidden" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-              <motion.div 
-                className="flex gap-6 pr-6"
-                animate={{ x: isHovered ? undefined : ["0%", "-50%"] }}
-                transition={{ x: { repeat: Infinity, repeatType: "loop", duration: 32, ease: "linear" } }}
-              >
-                {[...data.principles, ...data.principles].map((card, i) => (
-                  <div key={i} className="w-[300px] md:w-[380px] flex-shrink-0 group p-8 border border-white/10 rounded-[2rem] bg-zinc-900/40 backdrop-blur-md transition-all duration-500 hover:border-blue-500/40 hover:bg-zinc-900/80">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="text-blue-500 transition-transform duration-500 group-hover:scale-110">
-                        {principleIcons[i % data.principles.length]}
-                      </div>
-                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">
-                        {card.number}
-                      </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {data.principles.map((card, i) => (
+                <div key={i} className="group p-8 border border-white/10 rounded-[2rem] bg-zinc-900/40 backdrop-blur-md transition-all duration-500 hover:border-rose-500/40 hover:bg-zinc-900/80">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="text-blue-500 group-hover:text-rose-500 transition-all duration-500 group-hover:scale-110">
+                      {principleIcons[i % data.principles.length]}
                     </div>
-                    <h4 className="text-xl font-bold mb-1 tracking-tight text-white">{card.title}</h4>
-                    <p className="text-blue-400 text-xs tracking-wide uppercase font-semibold mb-3">{card.subtitle}</p>
-                    <p className="text-zinc-400 text-xs md:text-sm leading-relaxed font-light">{card.description}</p>
+                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">
+                      {card.number}
+                    </span>
                   </div>
-                ))}
-              </motion.div>
+                  <h4 className="text-xl font-bold mb-1 tracking-tight text-white group-hover:text-blue-400 transition-colors duration-300">{card.title}</h4>
+                  <p className="text-blue-400 group-hover:text-rose-400 transition-colors duration-300 text-xs tracking-wide uppercase font-semibold mb-3">{card.subtitle}</p>
+                  <p className="text-zinc-400 text-xs md:text-sm leading-relaxed font-light">{card.description}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
       )}
 
       {/* --- START THE JOURNEY / CTA CARDS SECTION --- */}
-      <section className="py-32 px-6 bg-zinc-50 dark:bg-zinc-900/20">
+      <section className="relative py-32 px-6 bg-zinc-50 dark:bg-zinc-900/20 z-10">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-16 space-y-3">
             <span className="text-xs font-mono tracking-widest uppercase text-blue-600 font-bold block">Start the Journey</span>
@@ -520,16 +575,16 @@ export default function OurApproachPage() {
 
 /* ---------------------- SUB MODULE VISUAL UTILITIES ---------------------- */
 const CTALinkCard = ({ icon, title, subtitle, desc, action, highlight }: any) => (
-  <div className={`p-8 rounded-[2rem] border transition-all duration-500 flex flex-col justify-between ${highlight ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 hover:border-blue-500'}`}>
+  <div className={`p-8 rounded-[2rem] border transition-all duration-500 flex flex-col justify-between group ${highlight ? 'bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-600 hover:to-rose-500 border-blue-600 text-white shadow-xl shadow-blue-600/10' : 'bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 hover:border-blue-500'}`}>
     <div>
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-6 ${highlight ? 'bg-white/20' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600'}`}>
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-6 transition-colors duration-300 ${highlight ? 'bg-white/20' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 group-hover:text-rose-500'}`}>
         {React.cloneElement(icon, { size: 20 })}
       </div>
       <span className={`text-[9px] font-mono tracking-widest uppercase ${highlight ? 'text-blue-200' : 'text-zinc-400'}`}>{title}</span>
       <h4 className="text-xl font-bold mt-1 mb-3 tracking-tight">{subtitle}</h4>
       <p className={`text-xs md:text-sm font-light leading-relaxed mb-6 ${highlight ? 'text-blue-50' : 'text-zinc-500'}`}>{desc}</p>
     </div>
-    <button className={`text-xs font-bold tracking-wider uppercase flex items-center gap-1 group w-fit ${highlight ? 'text-white' : 'text-blue-600'}`}>
+    <button className={`text-xs font-bold tracking-wider uppercase flex items-center gap-1 w-fit transition-transform group-hover:translate-x-1 duration-300 ${highlight ? 'text-white' : 'text-blue-600 group-hover:text-rose-500'}`}>
       {action}
     </button>
   </div>
