@@ -39,8 +39,8 @@ const Navbar = () => {
   useEffect(() => {
     async function getNavigationServices() {
       try {
-        // Query reads title and slug properties, ordering them alphabetically by title
-        const query = `*[_type == "service" && defined(slug.current)] | order(title asc) {
+        // CHANGED: Ordered by 'id' asc instead of 'title asc' to respect your custom CMS badge layout ordering
+        const query = `*[_type == "service" && defined(slug.current)] | order(id asc) {
           title,
           slug
         }`;
@@ -128,7 +128,8 @@ const Navbar = () => {
                         <Link
                           key={service.slug}
                           href={service.slug}
-                          className="group block px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-500 hover:bg-zinc-50 dark:hover:bg-white/5 rounded-lg transition-all"
+                          // CHANGED: text-zinc-500 dark:text-zinc-400 replaced with dark:text-zinc-50 text-zinc-950 to match other main text systems
+                          className="group block px-4 py-3 text-[10px] font-bold uppercase tracking-widest dark:text-zinc-50 text-zinc-950 hover:text-blue-600 dark:hover:text-blue-500 hover:bg-zinc-50 dark:hover:bg-white/5 rounded-lg transition-all"
                         >
                           <span className="flex items-center justify-between">
                             {service.name}
@@ -221,8 +222,9 @@ const Navbar = () => {
                             key={service.slug} 
                             href={service.slug} 
                             onClick={() => setIsOpen(false)}
+                            // CHANGED: text-zinc-500 text adjustments updated to look bright and clear matching headers
                             className={`text-lg font-bold uppercase tracking-widest transition-colors ${
-                              pathname === service.slug ? "text-blue-600" : "text-zinc-500 dark:text-zinc-400 active:text-blue-600"
+                              pathname === service.slug ? "text-blue-600" : "dark:text-zinc-50 text-zinc-950 active:text-blue-600"
                             }`}
                           >
                             {service.name}
