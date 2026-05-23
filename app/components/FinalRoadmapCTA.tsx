@@ -117,7 +117,7 @@ const FinalRoadmapCTA = () => {
             </motion.p>
 
             <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-              <Link href="/Portfolio">
+              <Link href="/insights">
               <button className="px-8 py-4 bg-blue-700 dark:bg-white text-white dark:text-black rounded-xl font-bold transition-all hover:bg-blue-800 dark:hover:bg-zinc-100 flex items-center gap-2 shadow-xl shadow-blue-900/10 dark:shadow-none">
                 Visit our Insights <ArrowRight className="w-4 h-4" />
               </button>

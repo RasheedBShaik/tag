@@ -10,7 +10,6 @@ export const coreValues = defineType({
       name: 'heading',
       title: 'Section Heading',
       type: 'string',
-      initialValue: 'Our Core Values',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -18,12 +17,11 @@ export const coreValues = defineType({
       title: 'Animated Line Color (Tailwind Class)',
       type: 'string',
       description: 'Example: bg-blue-600, bg-rose-500, bg-amber-500',
-      initialValue: 'bg-blue-600',
     }),
     defineField({
       name: 'technologies',
       title: 'Value Items',
-      description: 'Add and order your core values (Heart, Mind, Technology)',
+      description: 'Add and order your core values manually',
       type: 'array',
       of: [
         {
@@ -35,7 +33,8 @@ export const coreValues = defineType({
               name: 'id',
               title: 'Sorting ID / Number',
               type: 'string',
-              description: 'e.g., 1, 2, 3 or 01, 02, 03. Used for strict rendering layout order.',
+              description: 'e.g., 1, 2, 3 or 01, 02, 03. Dictates strict masonry layout order.',
+              validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: 'name',
@@ -58,7 +57,7 @@ export const coreValues = defineType({
               name: 'icon',
               title: 'Icon Type',
               type: 'string',
-              description: 'Must match component icons: "heart", "brain", or "cpu".',
+              description: 'Select icon styling to match frontend configurations.',
               options: {
                 list: [
                   { title: 'Heart (Empathy)', value: 'heart' },

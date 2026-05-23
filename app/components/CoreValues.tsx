@@ -5,15 +5,14 @@ import React from 'react';
 import { Heart, Brain, Cpu, CheckCircle2, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// --- TYPE INTERFACES ---
 export interface ValueItem {
-  _key?: string;
-  id?: string | null;
-  name?: string | null;
-  tagline?: string | null;
-  description?: string | null;
-  icon?: string | null; 
-  features?: string[] | null;
+  _key: string;
+  id?: string;
+  name: string;
+  tagline?: string;
+  description?: string;
+  icon?: string;
+  features?: string[];
 }
 
 interface CoreValuesProps {
@@ -24,7 +23,6 @@ interface CoreValuesProps {
   } | null;
 }
 
-// --- ICON & STYLE MAPS ---
 const iconMap: Record<string, React.ReactNode> = {
   heart: <Heart className="w-8 h-8 text-rose-500" />,
   brain: <Brain className="w-8 h-8 text-blue-500" />,
@@ -37,100 +35,19 @@ const accentMap: Record<string, string> = {
   cpu: "group-hover:border-amber-500/50",
 };
 
-// Clean invisible zero-width characters often injected during data transfer/copying
-const cleanText = (str: string | null | undefined): string => {
-  if (!str) return "";
-  return str.replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
-};
-
-// Main static fallbacks if array is totally unpopulated
-export const defaultValues = [
-  {
-    id: "01",
-    name: "Heart",
-    tagline: "Empathy · Ethics · Human-Centricity",
-    description: "Technology built without empathy becomes a burden. We design every system around the humans who live inside it.",
-    icon: "heart",
-    features: ["Stakeholder empathy mapping", "Ethical AI & responsible governance", "Change management for adoption", "Inclusive design for all users"]
-  },
-  {
-    id: "02",
-    name: "Mind",
-    tagline: "Strategy · Intelligence · Clarity",
-    description: "Complexity is the enemy of progress. We cut through it with sharp strategic thinking and data-driven clarity.",
-    icon: "brain",
-    features: ["Digital transformation milestones", "Data architecture & AI strategy", "Portfolio rationalization", "Board-ready technical roadmaps"]
-  },
-  {
-    id: "03",
-    name: "Technology",
-    tagline: "Architecture · Security · Scale",
-    description: "Great strategy demands execution. We deliver scalable, secure, and sovereign systems that perform today.",
-    icon: "cpu",
-    features: ["Cloud & Enterprise architecture", "Zero-trust & Digital sovereignty", "AI/ML & Data pipelines", "Emerging tech production readiness"]
-  }
-];
-
-// --- MAIN CONSOLIDATED COMPONENT ---
 const CoreValues: React.FC<CoreValuesProps> = ({ data }) => {
-  const rawHeading = data?.heading || "Our Core Values";
-  const heading = cleanText(rawHeading);
-  const activeLineColor = data?.lineColor || "bg-blue-600";
-  const items = data?.technologies || [];
-  
-  const rawDisplayItems = items && items.length > 0 ? items : defaultValues;
+  if (!data || !data.technologies || data.technologies.length === 0) return null;
 
-  // Pre-process and normalize items to identify their names/IDs before sorting
-  const normalizedItems = rawDisplayItems.map((item, index) => {
-    let name = cleanText(item.name);
-    let tagline = cleanText(item.tagline);
-    let description = cleanText(item.description);
-    let features: string[] = item.features ? item.features.map(f => cleanText(f)) : [];
-    let iconKey = cleanText(item.icon).toLowerCase();
+  const heading = data.heading || "";
+  const activeLineColor = data.lineColor || "bg-blue-600";
+  const items = data.technologies;
 
-    // Defensive parsing for single mashed string layouts
-    if (!name && description.includes('\n')) {
-      const lines = description.split('\n').map(l => l.trim()).filter(Boolean);
-      if (lines.length >= 3) {
-        tagline = lines[0];
-        description = lines[1];
-        features = lines.slice(2);
-      }
-      if (tagline.toLowerCase().includes('empathy') || iconKey === 'heart') name = "Heart";
-      else if (tagline.toLowerCase().includes('strategy') || iconKey === 'brain') name = "Mind";
-      else name = "Technology";
-    }
-
-    if (!name) name = index === 0 ? "Heart" : index === 1 ? "Mind" : "Technology";
-    
-    // Explicitly calculate a reliable sorting ID if missing from Sanity
-    let derivedId = cleanText(item.id);
-    if (!derivedId) {
-      if (name.toLowerCase().includes("heart")) derivedId = "1";
-      else if (name.toLowerCase().includes("mind") || name.toLowerCase().includes("brain")) derivedId = "2";
-      else derivedId = "3";
-    }
-
-    if (iconKey === 'icon' || !iconKey) {
-      iconKey = name.toLowerCase().includes('heart') ? 'heart' : name.toLowerCase().includes('mind') || name.toLowerCase().includes('brain') ? 'brain' : 'cpu';
-    }
-
-    // Safely check for CMS _key presence across union object patterns
-    const cmsKey = '_key' in item ? (item._key as string) : undefined;
-
-    return {
-      cmsKey,
-      name,
-      tagline,
-      description,
-      features,
-      iconKey,
-      sortId: parseInt(derivedId, 10) || (index + 1)
-    };
+  // Strict sorting based on your manual CMS ID entry
+  const sortedItems = [...items].sort((a, b) => {
+    const idA = parseInt(a.id || "0", 10);
+    const idB = parseInt(b.id || "0", 10);
+    return idA - idB;
   });
-
-  // Enforce clean mathematical ascending order (1 -> 2 -> 3)
-  const sortedDisplayItems = [...normalizedItems].sort((a, b) => a.sortId - b.sortId);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -147,27 +64,29 @@ const CoreValues: React.FC<CoreValuesProps> = ({ data }) => {
       <div className="max-w-7xl mx-auto px-6">
         
         {/* SECTION HEADER */}
-        <div className="mb-16">
-          <motion.h2
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-zinc-900 dark:text-white"
-          >
-            {heading}
-          </motion.h2>
+        {heading && (
+          <div className="mb-16">
+            <motion.h2
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-zinc-900 dark:text-white"
+            >
+              {heading}
+            </motion.h2>
 
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: "easeInOut", delay: 0.3 }}
-            style={{ originX: 0 }}
-            className={`w-48 h-1 mt-4 ${activeLineColor}`}
-            aria-hidden="true"
-          />
-        </div>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: "easeInOut", delay: 0.3 }}
+              style={{ originX: 0 }}
+              className={`w-48 h-1 mt-4 ${activeLineColor}`}
+              aria-hidden="true"
+            />
+          </div>
+        )}
         
         {/* GRID ENGINE */}
         <div className="max-w-7xl mx-auto py-4">
@@ -178,14 +97,15 @@ const CoreValues: React.FC<CoreValuesProps> = ({ data }) => {
             viewport={{ once: true }}
             className="grid grid-cols-1 lg:grid-cols-3 gap-8"
           >
-            {sortedDisplayItems.map((processedItem, index) => {
-              const formattedDisplayId = String(processedItem.sortId).padStart(2, '0');
-              const renderedIcon = iconMap[processedItem.iconKey] || <HelpCircle className="w-8 h-8 text-zinc-500" />;
-              const accentClass = accentMap[processedItem.iconKey] || "group-hover:border-zinc-500/50";
+            {sortedItems.map((item) => {
+              const iconKey = item.icon?.toLowerCase() || "";
+              const renderedIcon = iconMap[iconKey] || <HelpCircle className="w-8 h-8 text-zinc-500" />;
+              const accentClass = accentMap[iconKey] || "group-hover:border-zinc-500/50";
+              const formattedDisplayId = item.id ? item.id.padStart(2, '0') : "";
 
               return (
                 <motion.div
-                  key={processedItem.cmsKey || formattedDisplayId || index}
+                  key={item._key}
                   variants={itemVariants}
                   whileHover={{ y: -8 }}
                   className={`group relative p-8 rounded-3xl transition-all duration-500 backdrop-blur-md
@@ -193,9 +113,11 @@ const CoreValues: React.FC<CoreValuesProps> = ({ data }) => {
                     dark:bg-zinc-900/50 dark:border-zinc-800 ${accentClass}`}
                 >
                   {/* Background Watermark ID */}
-                  <span className="absolute top-6 right-8 text-6xl font-black opacity-5 dark:opacity-10 pointer-events-none italic select-none">
-                    {formattedDisplayId}
-                  </span>
+                  {formattedDisplayId && (
+                    <span className="absolute top-6 right-8 text-6xl font-black opacity-5 dark:opacity-10 pointer-events-none italic select-none">
+                      {formattedDisplayId}
+                    </span>
+                  )}
 
                   {/* Icon Container */}
                   <div className="mb-8 p-4 inline-block rounded-2xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
@@ -205,24 +127,26 @@ const CoreValues: React.FC<CoreValuesProps> = ({ data }) => {
                   {/* Headers */}
                   <div className="mb-6">
                     <h3 className="text-2xl font-bold text-zinc-900 dark:text-white uppercase tracking-tighter">
-                      {processedItem.name}
+                      {item.name}
                     </h3>
-                    {processedItem.tagline && (
+                    {item.tagline && (
                       <p className="text-sm font-bold text-blue-600 dark:text-blue-400/80 uppercase tracking-widest mt-1">
-                        {processedItem.tagline}
+                        {item.tagline}
                       </p>
                     )}
                   </div>
 
                   {/* Main Body */}
-                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed mb-8 font-medium">
-                    {processedItem.description}
-                  </p>
+                  {item.description && (
+                    <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed mb-8 font-medium">
+                      {item.description}
+                    </p>
+                  )}
 
                   {/* Checklist Features */}
-                  {processedItem.features && processedItem.features.length > 0 && (
+                  {item.features && item.features.length > 0 && (
                     <ul className="space-y-4 border-t border-zinc-100 dark:border-zinc-800 pt-8">
-                      {processedItem.features.map((feature, idx) => (
+                      {item.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-3">
                           <CheckCircle2 className="w-5 h-5 text-zinc-400 dark:text-zinc-600 mt-0.5 flex-shrink-0" />
                           <span className="text-sm text-zinc-700 dark:text-zinc-300 font-medium">

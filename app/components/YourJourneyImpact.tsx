@@ -110,14 +110,13 @@ const EngineeringSovereignty = () => {
                 A proprietary diagnostic TheTAG uses to assess your organization's technology independence across six critical dimensions.
               </p>
               
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="group flex items-center gap-4 text-[11px] font-black uppercase tracking-widest px-8 py-5 bg-blue-600 text-white rounded-full transition-all shadow-xl shadow-blue-600/20"
+              <a
+                className="group w-fit flex items-center gap-4 text-[11px] font-black uppercase tracking-widest px-8 py-5 bg-blue-600 text-white rounded-full transition-all shadow-xl shadow-blue-600/20"
+                href="/contact"
               >
                 Request Your Assessment
                 <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </motion.button>
+              </a>
             </div>
 
             <div className="lg:col-span-7">

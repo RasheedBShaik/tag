@@ -12,101 +12,140 @@ import {
   Terminal,
   Handshake,
   ArrowRight,
+  Brain,
+  Cpu,
+  Shield,
+  Zap,
+  Globe,
+  Activity,
+  Rocket,
+  Heart,
+  LucideIcon,
 } from "lucide-react";
 
-/* ---------------------- DATA ---------------------- */
+/* ---------------------- TYPES ---------------------- */
 
-const SERVICES = [
-  {
-    title: ["Design", "Studio"],
-    framework: "Heart",
-    icon: Palette,
-    desc: "We design experiences that feel human. Our studio translates your story into beautiful, intuitive systems.",
-    color: "text-rose-600 dark:text-rose-400",
-    bg: "bg-rose-500/10",
-    accent: "group-hover:border-rose-500/30 hover:shadow-rose-500/5",
-    href: "/services/design",
-  },
-  {
-    title: ["Culinary Arts", "Culture"],
-    framework: "Heart",
-    icon: UtensilsCrossed,
-    desc: "We craft authentic cultural experiences through immersive concepts and storytelling.",
-    color: "text-orange-600 dark:text-orange-400",
-    bg: "bg-orange-500/10",
-    accent: "group-hover:border-orange-500/30 hover:shadow-orange-500/5",
-    href: "/services/arts",
-  },
-  {
-    title: ["Health", "Wellness"],
-    framework: "Heart & Tech",
-    icon: HeartPulse,
-    desc: "Bridging community, care, and technology to create meaningful wellness systems.",
-    color: "text-emerald-600 dark:text-emerald-400",
-    bg: "bg-emerald-500/10",
-    accent: "group-hover:border-emerald-500/30 hover:shadow-emerald-500/5",
-    href: "/services/health",
-  },
-  {
-    title: ["Technology", "Advisory"],
-    framework: "Mind & Tech",
-    icon: Terminal,
-    desc: "We transform complex challenges into human-centered digital solutions.",
-    color: "text-blue-600 dark:text-blue-400",
-    bg: "bg-blue-500/10",
-    accent: "group-hover:border-blue-500/30 hover:shadow-blue-500/5",
-    href: "/services/advisory",
-  },
-  {
-    title: ["Strategic", "Ventures"],
-    framework: "Heart & Mind",
-    icon: Handshake,
-    desc: "We co-build ventures aligned with mission, creativity, and capital.",
-    color: "text-indigo-600 dark:text-indigo-400",
-    bg: "bg-indigo-500/10",
-    accent: "group-hover:border-indigo-500/30 hover:shadow-indigo-500/5",
-    href: "/services/strategic",
-  },
-];
+export interface SanityServiceTheme {
+  primary?: string;
+  secondary?: string;
+  accent?: string;
+  glow?: string;
+  glass?: string;
+}
+
+export interface SanityService {
+  _id?: string;
+  _type: "service";
+  title: string;
+  slug: {
+    _type: "slug";
+    current: string;
+  };
+  id?: string;
+  description?: string;
+  iconName?: string;
+  theme?: SanityServiceTheme;
+  // Included additional array blocks from your schema definitions
+  portfolioTiers?: Array<{
+    label?: string;
+    name?: string;
+    subtitle?: string;
+    summary?: string;
+    benchmarks?: string[];
+  }>;
+  valuePillars?: Array<{
+    index?: string;
+    headline?: string;
+    subline?: string;
+    body?: string;
+  }>;
+  processTimeline?: Array<{
+    stepNumber?: string;
+    frameworkNode?: string;
+    durationWindow?: string;
+    title?: string;
+    narrative?: string;
+  }>;
+  caseStudies?: Array<{
+    vertical?: string;
+    transformType?: string;
+    headline?: string;
+    problemDescription?: string;
+    resolutionDescription?: string;
+    impactMetrics?: string;
+    activeNodes?: string[];
+  }>;
+  faqCollection?: Array<{
+    question?: string;
+    answer?: string;
+  }>;
+}
+
+interface FrameworkCarouselProps {
+  services: SanityService[];
+}
+
+/* ------------------- ICON RESOLVER ------------------- */
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  heart: Heart,
+  brain: Brain,
+  cpu: Cpu,
+  shield: Shield,
+  zap: Zap,
+  globe: Globe,
+  utensils: UtensilsCrossed,
+  activity: HeartPulse,
+  palette: Palette,
+  rocket: Rocket,
+};
+
+const getServiceIcon = (iconName?: string): LucideIcon => {
+  if (!iconName) return Terminal;
+  const key = iconName.toLowerCase().trim();
+  return ICON_MAP[key] || Terminal;
+};
 
 /* ---------------------- CARD ---------------------- */
 
-const ServiceCard = ({
-  service,
-  isActive,
-}: {
-  service: any;
+interface ServiceCardProps {
+  service: SanityService;
   isActive: boolean;
-}) => {
-  const Icon = service.icon;
+}
+
+const ServiceCard = ({ service, isActive }: ServiceCardProps): React.JSX.Element => {
+  const Icon = getServiceIcon(service.iconName);
+  
+  // Parse dynamic title configuration into layout elements
+  const titleParts = service.title ? service.title.split(/(?:\s+and\s+|\s+&\s+)/i) : ["Untitled Service"];
+  
+  // Safe Fallbacks built over engine layout configurations
+  const primaryColor = service.theme?.accent || "text-blue-600 dark:text-blue-400";
+  const customBgStyle = service.theme?.glass ? { backgroundColor: service.theme.glass } : undefined;
+  const customGlowStyle = service.theme?.glow ? { "--glow-clr": service.theme.glow } : undefined;
+
   return (
-    <Link href={service.href} className="block cursor-pointer select-none">
+    <Link href={`/services/${service.slug?.current || ""}`} className="block cursor-pointer select-none">
       <motion.div
         animate={{
           opacity: isActive ? 1 : 0.65,
           scale: isActive ? 1 : 0.96,
         }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className={`group relative h-[480px] md:h-[520px] p-8 md:p-10 rounded-[2.5rem] bg-zinc-50 dark:bg-zinc-900/40 backdrop-blur-md border border-zinc-200/80 dark:border-white/5 flex flex-col justify-between transition-all duration-500 hover:shadow-2xl ${service.accent}`}
+        style={{ ...customBgStyle, ...customGlowStyle } as React.CSSProperties}
+        className={`group relative h-[480px] md:h-[520px] p-8 md:p-10 rounded-[2.5rem] bg-zinc-50 dark:bg-zinc-900/40 backdrop-blur-md border border-zinc-200/80 dark:border-white/5 flex flex-col justify-between transition-all duration-500 hover:shadow-2xl hover:border-zinc-300 dark:hover:border-white/10`}
       >
         <div>
           {/* Icon Wrapper */}
           <div
-            className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl ${service.bg} ${service.color} flex items-center justify-center mb-8 shadow-sm transition-transform duration-500 group-hover:scale-105`}
+            className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-8 shadow-sm transition-transform duration-500 group-hover:scale-105 bg-zinc-200/40 dark:bg-zinc-800/40 ${primaryColor}`}
           >
             <Icon className="w-6 h-6 md:w-7 md:h-7 stroke-[1.75]" />
           </div>
 
-          {/* Framework Tag */}
-          <div className="mb-5 flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-[0.15em] px-3.5 py-1.5 rounded-full border border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400 bg-white/80 dark:bg-zinc-800/30">
-              {service.framework}
-            </span>
-          </div>
-
           {/* Heading */}
           <h4 className="text-2xl md:text-3xl font-black uppercase tracking-tight mb-4 text-zinc-900 dark:text-white leading-[1.05]">
-            {service.title.map((part: string, i: number) => (
+            {titleParts.map((part: string, i: number) => (
               <span key={i} className="block">
                 {i > 0 && (
                   <span className="text-zinc-300 dark:text-zinc-700 italic font-light font-serif lowercase mr-1.5">
@@ -118,18 +157,18 @@ const ServiceCard = ({
             ))}
           </h4>
 
-          {/* Description */}
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base leading-relaxed max-w-sm font-medium tracking-wide">
-            {service.desc}
+          {/* Description Block */}
+          <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base leading-relaxed max-w-sm font-medium tracking-wide line-clamp-4">
+            {service.description}
           </p>
         </div>
 
         {/* Action Footing */}
         <div className="flex items-center gap-2 text-zinc-900 dark:text-white font-bold text-xs uppercase tracking-widest transition-all duration-300">
-          <span className="relative after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[1.5px] after:bg-blue-600 dark:after:bg-blue-400 after:transition-all after:duration-300 group-hover:after:w-full">
+          <span className="relative after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[1.5px] after:bg-zinc-900 dark:after:bg-white after:transition-all after:duration-300 group-hover:after:w-full">
             Learn More
           </span>
-          <ArrowRight className="w-4 h-4 text-blue-600 dark:text-blue-400 transform transition-transform duration-300 group-hover:translate-x-1.5" />
+          <ArrowRight className="w-4 h-4 transform transition-transform duration-300 group-hover:translate-x-1.5" />
         </div>
       </motion.div>
     </Link>
@@ -138,7 +177,7 @@ const ServiceCard = ({
 
 /* ---------------------- MAIN ---------------------- */
 
-const FrameworkCarousel = () => {
+const FrameworkCarousel = ({ services = [] }: FrameworkCarouselProps): React.JSX.Element => {
   const autoplay = useMemo(
     () => Autoplay({ delay: 5000, stopOnInteraction: false }),
     []
@@ -154,7 +193,7 @@ const FrameworkCarousel = () => {
     [autoplay]
   );
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
   const onSelect = useCallback(() => {
@@ -169,6 +208,8 @@ const FrameworkCarousel = () => {
     emblaApi.on("select", onSelect);
     emblaApi.on("reInit", onSelect);
   }, [emblaApi, onSelect]);
+
+  if (!services || services.length === 0) return <></>;
 
   return (
     <section className="py-24 md:py-36 bg-white dark:bg-[#09090b] transition-colors max-w-[1400px] mx-auto duration-500 overflow-hidden relative">
@@ -213,9 +254,9 @@ const FrameworkCarousel = () => {
         ref={emblaRef}
       >
         <div className="flex touch-pan-y ml-[-1rem] md:ml-[-1.5rem]">
-          {SERVICES.map((service, i) => (
+          {services.map((service, i) => (
             <div
-              key={i}
+              key={service._id || i}
               className="flex-[0_0_88%] md:flex-[0_0_45%] lg:flex-[0_0_30%] min-w-0 pl-4 md:pl-6"
             >
               <ServiceCard service={service} isActive={selectedIndex === i} />
@@ -253,7 +294,7 @@ const FrameworkCarousel = () => {
           <span className="text-zinc-900 dark:text-white transition-colors">
             0{selectedIndex + 1}
           </span>{" "}
-          <span className="opacity-40">/</span> 0{SERVICES.length}
+          <span className="opacity-40">/</span> 0{services.length}
         </div>
       </div>
     </section>

@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import FrameworkCarousel from './components/IntegratedFrameWork';
 import ImpactHero from './components/YourJourneyImpact';
 import HowWeWork from './components/HowWeWork';
-import HomeTestimonials from './components/Testimonials'; // Updated import name
+import HomeTestimonials from './components/Testimonials';
 import FinalRoadmapCTA from './components/FinalRoadmapCTA';
 import WhyTheTAG from './components/WhyTheTag'; 
 
@@ -60,10 +60,46 @@ async function getCoreValuesData() {
   }
 }
 
+// Fetch Services Studio Data for Integrated Framework Carousel
+async function getServicesData() {
+  try {
+    const query = `*[_type == "service"] | order(id asc) {
+      _id,
+      _type,
+      title,
+      slug { current },
+      id,
+      description,
+      iconName,
+      theme {
+        primary,
+        secondary,
+        accent,
+        glow,
+        glass
+      },
+      processTimeline[] {
+        frameworkNode
+      },
+      portfolioTiers[] {
+        benchmarks
+      },
+      caseStudies[] {
+        activeNodes
+      }
+    }`;
+    return await client.fetch(query, {}, { next: { revalidate: 0 } });
+  } catch (error) {
+    console.error("CRITICAL ERROR: Failed to fetch services studio data:", error);
+    return [];
+  }
+}
+
 const Page = async () => {
-  const [testimonialsData, coreValuesData] = await Promise.all([
+  const [testimonialsData, coreValuesData, servicesData] = await Promise.all([
     getTestimonialsData(),
     getCoreValuesData(),
+    getServicesData(),
   ]);
 
   return (
@@ -74,7 +110,10 @@ const Page = async () => {
       <CoreValues data={coreValuesData} />
       
       <WhyTheTAG />
-      <FrameworkCarousel />
+      
+      {/* Services dynamic data successfully linked */}
+      <FrameworkCarousel services={servicesData} />
+      
       <ImpactHero />
       <HowWeWork />
       
