@@ -1,58 +1,99 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, ArrowRight, CheckCircle2 } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mail, Phone, MapPin, ArrowRight, CheckCircle2, ChevronDown } from "lucide-react";
+
+interface EngagementCardProps {
+  badge: string;
+  title: string;
+  description: string;
+  actionText: string;
+  href: string;
+}
+
+interface ContactItemProps {
+  label: string;
+  value: React.ReactNode;
+  icon: React.ReactNode;
+  isEmail?: boolean;
+  href?: string;
+}
+
+interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+}
 
 export default function ContactComponent() {
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [selectedInquiry, setSelectedInquiry] = useState<string>("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Google Maps URL for the specific address
   const mapUrl = "https://www.google.com/maps/search/?api=1&query=574+Rita+Blanca+Dr,+Webster,+TX+77598";
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const inquiryTypes = [
+    { id: "tech-advisory", name: "Technology Advisory" },
+    { id: "strategic-ventures", name: "Strategic Ventures" },
+    { id: "design-studio", name: "Design Studio" },
+    { id: "general", name: "General Inquiry" },
+  ];
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitted(true);
   };
 
   return (
-    <section className="relative min-h-screen bg-[#F9F9F8] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 py-24 md:py-32 px-6 md:px-12 lg:px-24 overflow-hidden">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative min-h-screen w-full bg-[#F9F9F8] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 py-20 lg:py-28 px-6 md:px-12 lg:px-20 xl:px-32 flex flex-col justify-between overflow-x-hidden select-none">
+      <div className="w-full max-w-[1400px] mx-auto space-y-24">
         
-        {/* HEADER SECTION */}
-        <header className="mb-20 md:mb-32">
+        {/* LAYER 1: TOP BRAND IDENTIFICATION */}
+        <header className="max-w-4xl space-y-8">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="flex items-center gap-3 text-blue-600 mb-8"
+            className="flex items-center gap-3 text-blue-600 dark:text-blue-500"
           >
             <div className="h-px w-12 bg-current" />
-            <span className="text-[10px] font-black uppercase tracking-[0.5em]">Initiate_Connection</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.5em]">Initiate Connection</span>
           </motion.div>
           
-          <h1 className="text-4xl md:text-8xl font-black tracking-tighter uppercase mb-10">
-            Let's Start a <br /> 
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-blue-500 to-indigo-400 dark:from-blue-500 dark:to-zinc-400">
+          <h1 className="text-5xl md:text-8xl font-black tracking-tighter uppercase leading-none">
+            Start a <br /> 
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-400 dark:from-blue-500 dark:to-zinc-400">
               conversation
             </span>
           </h1>
-          <p className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl font-medium leading-relaxed">
-            Whether you're a founder with a bold idea or an enterprise leader driving transformation, we're here to architect the next phase of your evolution.
+          
+          <p className="text-md md:text-xl text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-3xl">
+            No pitch decks. No intake forms. No CRM sequence. A founding principal reads every message, responds within 48 hours, and gives you an honest read on whether and how we can help.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+        {/* LAYER 2: INTERACTIVE FORM & LOGISTICS GRID */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-stretch border-t border-zinc-200 dark:border-zinc-900 pt-16">
           
-          {/* LEFT: CONTACT DETAILS & MAP */}
-          <aside className="lg:col-span-4 space-y-12 py-4">
-            <div className="space-y-12">
+          {/* LEFT: COMMUNICATIONS & MAP EMBED */}
+          <aside className="lg:col-span-5 flex flex-col justify-between space-y-12">
+            <div className="space-y-10">
               <ContactItem 
                 label="Registry_Email" 
-                value="TheTAG.Partners@outlook.com" 
+                value="partners@th3tag.com" 
                 icon={<Mail size={18} />} 
                 isEmail 
-                href="mailto:TheTAG.Partners@outlook.com"
+                href="mailto:partners@th3tag.com"
               />
               <ContactItem 
                 label="Secure_Line" 
@@ -62,7 +103,7 @@ export default function ContactComponent() {
               />
               <ContactItem 
                 label="Physical_Node" 
-                value={<>574 Rita Blanca Dr, <br /> Webster, TX 77598</>} 
+                value={<>574 Rita Blanca Dr, <br /> Webster TX 77598</>} 
                 icon={<MapPin size={18} />} 
                 href={mapUrl}
               />
@@ -73,9 +114,10 @@ export default function ContactComponent() {
               href={mapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="relative block w-full h-48 md:h-64 rounded-3xl overflow-hidden border border-zinc-200 dark:border-white/10 group md:grayscale hover:grayscale-0 transition-all duration-700"
+              viewport={{ once: true }}
+              className="relative block w-full h-48 md:h-56 rounded-[2rem] overflow-hidden border border-zinc-200 dark:border-zinc-900 group md:grayscale hover:grayscale-0 transition-all duration-700 shadow-sm"
             >
               <iframe
                 title="Office Location"
@@ -83,101 +125,206 @@ export default function ContactComponent() {
                 className="w-full h-full border-0 pointer-events-none"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-blue-600/10 group-hover:bg-transparent transition-colors duration-500" />
-              <div className="absolute bottom-4 right-4 bg-white dark:bg-zinc-900 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                Open Maps <ArrowRight size={12} />
+              <div className="absolute inset-0 bg-blue-600/5 group-hover:bg-transparent transition-colors duration-500" />
+              <div className="absolute bottom-4 right-4 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                Open Maps <ArrowRight size={11} />
               </div>
             </motion.a>
 
-            <div className="hidden lg:block pt-12 border-t border-zinc-200 dark:border-white/5">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Availability: 09:00 - 18:00 CST</p>
+            <div className="grid grid-cols-2 gap-4 pt-8 border-t border-zinc-200 dark:border-zinc-900/60">
+              <div>
+                <span className="text-[8px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 block mb-0.5">Response Latency</span>
+                <p className="text-[11px] font-bold uppercase text-zinc-800 dark:text-zinc-200">Within 48 hours</p>
+              </div>
+              <div>
+                <span className="text-[8px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 block mb-0.5">Availability</span>
+                <p className="text-[11px] font-bold uppercase text-blue-600 dark:text-blue-400">Booking Q3 2026</p>
+              </div>
             </div>
           </aside>
 
-          {/* RIGHT: THE INTERACTIVE FORM */}
-          <div className="lg:col-span-8 bg-white dark:bg-white/2 p-8 md:p-16 rounded-4xl border border-zinc-200 dark:border-white/10 relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.04)] dark:shadow-none">
-            
+          {/* RIGHT: DYNAMIC INPUT MODULE */}
+          <div className="lg:col-span-7 bg-white dark:bg-zinc-900/40 backdrop-blur-md p-8 md:p-12 xl:p-14 rounded-[2.5rem] border border-zinc-200 dark:border-zinc-900 relative overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.015)] dark:shadow-none flex flex-col justify-center">
             {!submitted ? (
-              <form onSubmit={handleSubmit} className="space-y-12 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <form onSubmit={handleSubmit} className="space-y-10 relative z-10 w-full">
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-zinc-900 pb-4">
+                  Project Parameter Inbound
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
                   <InputField label="Full Name *" type="text" required />
                   <InputField label="Work Email *" type="email" required />
                 </div>
 
-                <div className="relative group border-b border-zinc-200 dark:border-white/10 focus-within:border-blue-600 transition-all duration-300">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-zinc-400 group-focus-within:text-blue-600">Inquiry Type *</label>
-                  <select required className="w-full bg-transparent py-4 outline-none text-lg font-bold uppercase appearance-none cursor-pointer text-zinc-900 dark:text-white">
-                    <option className="bg-white dark:bg-zinc-950">Technology Advisory</option>
-                    <option className="bg-white dark:bg-zinc-950">Strategic Ventures</option>
-                    <option className="bg-white dark:bg-zinc-950">Design Studio</option>
-                    <option className="bg-white dark:bg-zinc-950">General Inquiry</option>
-                  </select>
-                  <div className="absolute right-0 bottom-6 pointer-events-none text-zinc-300 group-focus-within:text-blue-600 transition-colors">
-                    <ArrowRight className="rotate-90" size={16} />
-                  </div>
+                {/* PREMIUM CUSTOM ANCHORED SELECT */}
+                <div ref={dropdownRef} className="relative border-b border-zinc-200 dark:border-zinc-900 focus-within:border-blue-600 transition-all duration-300">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 block mb-1">
+                    Inquiry Type *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="w-full bg-transparent py-4 text-left text-lg font-bold uppercase flex items-center justify-between text-zinc-900 dark:text-white"
+                  >
+                    <span className={selectedInquiry ? "text-zinc-900 dark:text-white" : "text-zinc-300 dark:text-zinc-700"}>
+                      {selectedInquiry ? inquiryTypes.find(p => p.id === selectedInquiry)?.name : "Select one..."}
+                    </span>
+                    <ChevronDown size={16} className={`text-zinc-400 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`} />
+                  </button>
+
+                  <AnimatePresence>
+                    {isDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute z-50 left-0 right-0 top-full mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl overflow-hidden max-h-60 overflow-y-auto"
+                      >
+                        {inquiryTypes.map((type) => (
+                          <button
+                            key={type.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedInquiry(type.id);
+                              setIsDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                          >
+                            {type.name}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                <div className="relative group border-b border-zinc-200 dark:border-white/10 focus-within:border-blue-600 transition-all duration-300">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-zinc-400 group-focus-within:text-blue-600">Message *</label>
-                  <textarea required rows={4} className="w-full bg-transparent py-4 outline-none text-lg font-medium resize-none text-zinc-900 dark:text-white placeholder:text-zinc-300" placeholder="HOW CAN WE ASSIST?" />
+                <div className="relative group border-b border-zinc-200 dark:border-zinc-900 focus-within:border-blue-600 transition-all duration-300">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 group-focus-within:text-blue-600 transition-colors">Message *</label>
+                  <textarea required rows={3} className="w-full bg-transparent py-4 outline-none text-lg font-medium resize-none text-zinc-900 dark:text-white placeholder:text-zinc-300 dark:placeholder:text-zinc-700 focus:placeholder:opacity-0 transition-all" placeholder="HOW CAN WE ASSIST?" />
                 </div>
 
-                <motion.button 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit" 
-                  className="group flex items-center gap-6 bg-zinc-900 dark:bg-white text-white dark:text-black px-10 py-6 rounded-full text-[10px] font-black uppercase tracking-[0.4em] hover:bg-blue-600 hover:text-white transition-all shadow-lg"
-                >
-                  Send_Inquiry <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
-                </motion.button>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 pt-2">
+                  <motion.button 
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    type="submit" 
+                    className="group flex items-center justify-center gap-6 bg-zinc-900 dark:bg-white text-white dark:text-black px-10 py-5 rounded-full text-[10px] font-black uppercase tracking-[0.4em] hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-all shadow-md whitespace-nowrap"
+                  >
+                    Send_Inquiry <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
+                  </motion.button>
+                  
+                  <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium max-w-xs leading-relaxed">
+                    Information routed into encrypted founding architectures. Identity values remain fully private.
+                  </p>
+                </div>
               </form>
             ) : (
               <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="min-h-100 flex flex-col items-center justify-center text-center space-y-8"
+                className="min-h-[400px] flex flex-col items-center justify-center text-center space-y-6"
               >
-                <div className="w-24 h-24 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-600/20">
-                  <CheckCircle2 size={48} />
+                <div className="w-16 h-16 bg-blue-600 dark:bg-blue-500 text-white dark:text-zinc-950 rounded-full flex items-center justify-center shadow-md">
+                  <CheckCircle2 size={32} />
                 </div>
-                <div className="space-y-4">
-                  <h3 className="text-4xl font-black uppercase italic tracking-tighter">Transmission Sent.</h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto font-medium">Your data packet has been successfully received. Our team will respond within 24 cycles.</p>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-black uppercase tracking-tighter">Transmission Sent.</h3>
+                  <p className="text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto text-xs font-medium">Your data packet has been successfully received. Response sequence active within 24 cycles.</p>
                 </div>
                 <button 
                   onClick={() => setSubmitted(false)} 
-                  className="text-[10px] font-black uppercase tracking-widest text-blue-600 border-b-2 border-blue-600 pb-1 hover:opacity-70 transition-opacity"
+                  className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 pb-0.5 hover:opacity-75 transition-all"
                 >
                   New Transmission
                 </button>
               </motion.div>
             )}
 
-            <div className="absolute inset-0 pointer-events-none opacity-[0.02] dark:opacity-[0.05]" 
-              style={{ backgroundImage: `radial-gradient(circle, #000 1px, transparent 1px)`, backgroundSize: '40px 40px' }} 
+            {/* BG RADIAL LAYER GRID */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.015] dark:opacity-[0.03]" 
+              style={{ backgroundImage: `radial-gradient(circle, #000 1px, transparent 1px)`, backgroundSize: '32px 32px' }} 
             />
           </div>
         </div>
+
+        {/* LAYER 3: THREE WAYS TO ENGAGE SYSTEM ARTIFACTS */}
+        <div className="space-y-8 border-t border-zinc-200 dark:border-zinc-900 pt-16">
+          <div className="flex flex-col space-y-1">
+            <span className="text-3xl   font-black uppercase tracking-[0.4em] dark:text-white block">
+              Three Ways to Start
+            </span>
+            <p className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+              Choose the path that fits where you are.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+            <EngagementCard 
+              badge="Free · 30 Minutes"
+              title="Discovery Call"
+              description="We listen to the actual problem and give you an honest read on fit, model, and timeline. No pitch — from either side."
+              actionText="Book a call"
+              href="#"
+            />
+            <EngagementCard 
+              badge="2–4 Week Sprint · Fixed Fee"
+              title="Rapid Diagnostic"
+              description="A scoped assessment of one domain — technology spend, venture readiness, brand, or program design. Findings and prioritized recommendations."
+              actionText="Request a diagnostic"
+              href="#"
+            />
+            <EngagementCard 
+              badge="Direct Access"
+              title="Email the Principals"
+              description="Read directly by a founding principal. No assistant, no auto-reply workflow, no complex intake sequence parameters."
+              actionText="partners@th3tag.com"
+              href="mailto:partners@th3tag.com"
+            />
+          </div>
+        </div>
+
       </div>
     </section>
   );
 }
 
-function ContactItem({ label, value, icon, isEmail = false, href }: any) {
+function EngagementCard({ badge, title, description, actionText, href }: EngagementCardProps) {
+  return (
+    <div className="bg-white dark:bg-zinc-900/20 border border-zinc-200 dark:border-zinc-900 rounded-[2rem] p-6 flex flex-col justify-between space-y-6 shadow-[0_4px_25px_rgba(0,0,0,0.005)] hover:border-zinc-300 dark:hover:border-zinc-800 transition-all duration-300 w-full group">
+      <div className="space-y-3">
+        <span className="text-[8px] font-black uppercase tracking-widest px-2.5 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 rounded-md inline-block">
+          {badge}
+        </span>
+        <h3 className="text-sm font-black uppercase tracking-tight text-zinc-900 dark:text-white leading-tight">{title}</h3>
+        <p className="text-[11px] text-zinc-400 dark:text-zinc-500 font-medium leading-relaxed">{description}</p>
+      </div>
+      <a 
+        href={href} 
+        className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400 underline-offset-4 w-fit pt-2"
+      >
+        {actionText} <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform" />
+      </a>
+    </div>
+  );
+}
+
+function ContactItem({ label, value, icon, isEmail = false, href }: ContactItemProps) {
   const Wrapper = href ? "a" : "div";
   
   return (
     <Wrapper 
       href={href} 
       target={href?.startsWith('http') ? "_blank" : undefined}
+      rel={href?.startsWith('http') ? "noopener noreferrer" : undefined}
       className="group cursor-pointer block"
     >
-      <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-4 block group-hover:text-blue-600 transition-colors">{label}</span>
-      <div className="flex items-start gap-4 text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 transition-colors">
-        <div className="mt-1 text-zinc-300 dark:text-zinc-700 group-hover:text-blue-600 transition-colors">
+      <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-400 dark:text-zinc-500 mb-2 block group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{label}</span>
+      <div className="flex items-start gap-4 text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        <div className="mt-1 text-zinc-300 dark:text-zinc-700 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
           {icon}
         </div>
-        <span className={`text-lg font-bold tracking-tight uppercase leading-snug ${isEmail || href ? 'underline underline-offset-8 decoration-zinc-200 dark:decoration-zinc-800 group-hover:decoration-blue-600' : ''}`}>
+        <span className={`text-lg font-bold tracking-tight uppercase leading-snug ${isEmail || href ? 'underline underline-offset-8 decoration-zinc-200 dark:decoration-zinc-900 group-hover:decoration-blue-600 dark:group-hover:decoration-blue-400' : ''}`}>
           {value}
         </span>
       </div>
@@ -185,15 +332,15 @@ function ContactItem({ label, value, icon, isEmail = false, href }: any) {
   );
 }
 
-function InputField({ label, ...props }: any) {
+function InputField({ label, ...props }: InputFieldProps) {
   return (
-    <div className="relative group border-b border-zinc-200 dark:border-white/10 focus-within:border-blue-600 transition-all duration-300">
-      <label className="text-[9px] font-black uppercase tracking-widest text-zinc-400 group-focus-within:text-blue-600 transition-colors">
+    <div className="relative group border-b border-zinc-200 dark:border-zinc-900 focus-within:border-blue-600 dark:focus-within:border-blue-500 transition-all duration-300 w-full">
+      <label className="text-[9px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-500 transition-colors">
         {label}
       </label>
       <input 
         {...props}
-        className="w-full bg-transparent py-4 outline-none text-lg font-bold uppercase transition-all text-zinc-900 dark:text-white placeholder:text-zinc-200" 
+        className="w-full bg-transparent py-3 outline-none text-lg font-bold uppercase transition-all text-zinc-900 dark:text-white placeholder:text-zinc-200 dark:placeholder:text-zinc-800 focus:outline-none" 
       />
     </div>
   );
