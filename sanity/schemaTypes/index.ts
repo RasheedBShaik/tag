@@ -6,7 +6,6 @@ import { insights } from './insights'
 
 import { coreValues } from './coreValues'
 import { testimonials} from './testimonials'
-import { differentiators} from './differentiators'
 import ourApproach from './ourApproach'
 import service  from './service'
 
@@ -17,8 +16,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     team,
     insights,
     coreValues,
-    testimonials,
-    differentiators,
+    testimonials,    
     ourApproach,
     service
   ],
