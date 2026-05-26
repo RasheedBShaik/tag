@@ -26,6 +26,7 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export default function ContactComponent() {
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [selectedInquiry, setSelectedInquiry] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -49,9 +50,42 @@ export default function ContactComponent() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // Web3Forms Asynchronous Submission
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    
+    // Hardcoded Access Key as requested
+    formData.append("access_key", "6135fd65-d59d-4833-8748-097c2213dce7");
+    
+    // Appending the Inquiry Type from custom dropdown state if selected
+    const currentInquiry = inquiryTypes.find(p => p.id === selectedInquiry)?.name || "Not Specified";
+    formData.append("inquiry_type", currentInquiry);
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSubmitted(true);
+        // Clear inquiry type state on success
+        setSelectedInquiry(""); 
+      } else {
+        console.error("Web3Forms submission error:", data);
+        alert("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      console.error("Form network error:", error);
+      alert("Network error. Please verify your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -147,13 +181,17 @@ export default function ContactComponent() {
           <div className="lg:col-span-7 bg-white dark:bg-zinc-900/40 backdrop-blur-md p-8 md:p-12 xl:p-14 rounded-[2.5rem] border border-zinc-200 dark:border-zinc-900 relative overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.015)] dark:shadow-none flex flex-col justify-center">
             {!submitted ? (
               <form onSubmit={handleSubmit} className="space-y-10 relative z-10 w-full">
+                
+                {/* Honeypot Spam Protection for Web3Forms */}
+                <input type="checkbox" name="botcheck" className="hidden" style={{ display: "none" }} />
+
                 <div className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-zinc-900 pb-4">
                   Project Parameter Inbound
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
-                  <InputField label="Full Name *" type="text" required />
-                  <InputField label="Work Email *" type="email" required />
+                  <InputField label="Full Name *" type="text" name="name" required />
+                  <InputField label="Work Email *" type="email" name="email" required />
                 </div>
 
                 {/* PREMIUM CUSTOM ANCHORED SELECT */}
@@ -201,17 +239,18 @@ export default function ContactComponent() {
 
                 <div className="relative group border-b border-zinc-200 dark:border-zinc-900 focus-within:border-blue-600 transition-all duration-300">
                   <label className="text-[9px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 group-focus-within:text-blue-600 transition-colors">Message *</label>
-                  <textarea required rows={3} className="w-full bg-transparent py-4 outline-none text-lg font-medium resize-none text-zinc-900 dark:text-white placeholder:text-zinc-300 dark:placeholder:text-zinc-700 focus:placeholder:opacity-0 transition-all" placeholder="HOW CAN WE ASSIST?" />
+                  <textarea name="message" required rows={3} className="w-full bg-transparent py-4 outline-none text-lg font-medium resize-none text-zinc-900 dark:text-white placeholder:text-zinc-300 dark:placeholder:text-zinc-700 focus:placeholder:opacity-0 transition-all" placeholder="HOW CAN WE ASSIST?" />
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 pt-2">
                   <motion.button 
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
+                    whileHover={!isSubmitting ? { scale: 1.01 } : {}}
+                    whileTap={!isSubmitting ? { scale: 0.99 } : {}}
                     type="submit" 
-                    className="group flex items-center justify-center gap-6 bg-zinc-900 dark:bg-white text-white dark:text-black px-10 py-5 rounded-full text-[10px] font-black uppercase tracking-[0.4em] hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-all shadow-md whitespace-nowrap"
+                    disabled={isSubmitting}
+                    className="group flex items-center justify-center gap-6 bg-zinc-900 dark:bg-white text-white dark:text-black px-10 py-5 rounded-full text-[10px] font-black uppercase tracking-[0.4em] hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-all shadow-md whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Send_Inquiry <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
+                    {isSubmitting ? "Sending..." : "Send Inquiry"} <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
                   </motion.button>
                   
                   <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium max-w-xs leading-relaxed">
@@ -229,14 +268,14 @@ export default function ContactComponent() {
                   <CheckCircle2 size={32} />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black uppercase tracking-tighter">Transmission Sent.</h3>
+                  <h3 className="text-2xl font-black uppercase tracking-tighter">Message Sent.</h3>
                   <p className="text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto text-xs font-medium">Your data packet has been successfully received. Response sequence active within 24 cycles.</p>
                 </div>
                 <button 
                   onClick={() => setSubmitted(false)} 
                   className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 pb-0.5 hover:opacity-75 transition-all"
                 >
-                  New Transmission
+                  New Message
                 </button>
               </motion.div>
             )}
